@@ -3000,11 +3000,11 @@ char* whoLine( CHAR_DATA* ch, CHAR_DATA* looker )
 		sprintf(chWizi, "(Wizi %d) ", ch->invis_level);
 
 	if (!IS_NULLSTR(ch->pcdata->pretitle)) {
-		sprintf(chPretitle, "[%14s] ", ch->pcdata->pretitle);
+		sprintf(chPretitle, "{b[%14s{b]{x ", ch->pcdata->pretitle);
 	} else if (ch->race == race_lookup("seraph")) {
-		sprintf(chPretitle, "[{cSeraph{x    %s]", chClass);
+		sprintf(chPretitle, "{b[{cSeraph{x    %s{b]{x", chClass);
 	} else {
-		sprintf(chPretitle, "[%2d {c%6s{x {%s%2s{x] ", ch->level, pc_race_table[ch->race].who_name, class_table[ch->class].cls_color, chClass);
+		sprintf(chPretitle, "{b[%2d {c%6s{x {%s%2s{x{b]{x ", ch->level, pc_race_table[ch->race].who_name, class_table[ch->class].cls_color, chClass);
 	}
 
     
@@ -3231,9 +3231,9 @@ void do_who( CHAR_DATA *ch, char *argument )
     output = new_buf();
 
 	add_buf(output, "{D:{B----------------------------------------------------------------------------------{D:\n\r");
-	add_buf(output, "{B[{D/{B]{D[{B\\{D]{B[{D/{B]{D[{B\\{D]{B[{D/{B]{D[{B\\{D]{B[{D/{B]{D[{B\\{D]{B[{D/{B]{D[{B\\{D]{D[{B/{D]{W");
-	add_buf(output, "Denizens in Rhia ");
-	add_buf(output, "{B[{D/{B]{D[{B\\{D]{B[{D/{B]{D[{B\\{D]{B[{D/{B]{D[{B\\{D]{B[{D/{B]{D[{B\\{D]{B[{D/{B]{D[{B\\{D]{D[{B/{D]\n\r");
+	add_buf(output, "{B[{D/{B]{B[{D\\{B]{B[{D/{B]{B[{D\\{B]{B[{D/{B]{B[{D\\{B]{B[{D/{B]{B[{D\\{B]{B[{D/{B]{B[{D\\{B]{B[{D/{B]{W");
+	add_buf(output, " Denizens in Rhia ");
+	add_buf(output, "{B[{D/{B]{B[{D\\{B]{B[{D/{B]{B[{D\\{B]{B[{D/{B]{B[{D\\{B]{B[{D/{B]{B[{D\\{B]{B[{D/{B]{B[{D\\{B]{B[{D/{B]\n\r");
 	add_buf(output, "{D:{B----------------------------------------------------------------------------------{D:\n\r");
 
     for ( d = descriptor_list; d != NULL; d = d->next ) {
