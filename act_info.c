@@ -3231,11 +3231,9 @@ void do_who( CHAR_DATA *ch, char *argument )
     output = new_buf();
 
 	add_buf(output, "{D:{B----------------------------------------------------------------------------------{D:\n\r");
-	add_buf(output, 
-		concat("{B[{D/{B]{D[{B\\{D]{B[{D/{B]{D[{B\\{D]{B[{D/{B]{D[{B\\{D]{B[{D/{B]{D[{B\\{D]{B[{D/{B]{D[{B\\{D]{D[{B/{D]{W", 
-			   "Denizens in Rhia ",
-			   "{B[{D/{B]{D[{B\\{D]{B[{D/{B]{D[{B\\{D]{B[{D/{B]{D[{B\\{D]{B[{D/{B]{D[{B\\{D]{B[{D/{B]{D[{B\\{D]{D[{B/{D]\n\r"
-	));
+	add_buf(output, "{B[{D/{B]{D[{B\\{D]{B[{D/{B]{D[{B\\{D]{B[{D/{B]{D[{B\\{D]{B[{D/{B]{D[{B\\{D]{B[{D/{B]{D[{B\\{D]{D[{B/{D]{W");
+	add_buf(output, "Denizens in Rhia ");
+	add_buf(output, "{B[{D/{B]{D[{B\\{D]{B[{D/{B]{D[{B\\{D]{B[{D/{B]{D[{B\\{D]{B[{D/{B]{D[{B\\{D]{B[{D/{B]{D[{B\\{D]{D[{B/{D]\n\r");
 	add_buf(output, "{D:{B----------------------------------------------------------------------------------{D:\n\r");
 
     for ( d = descriptor_list; d != NULL; d = d->next ) {
