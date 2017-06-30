@@ -60,8 +60,8 @@ char arg1 [MAX_INPUT_LENGTH];
 	char arg4 [MAX_INPUT_LENGTH];
 	char buf [MAX_INPUT_LENGTH];
 	DESCRIPTOR_DATA * d;
-    CHAR_DATA * jouster1 = null;
-	CHAR_DATA * jouster2 = null;
+    CHAR_DATA * jouster1 = NULL;
+	CHAR_DATA * jouster2 = NULL;
 	int value;
 
 	int jouster1_count = 0;
@@ -81,7 +81,7 @@ char arg1 [MAX_INPUT_LENGTH];
 
 
 
-	for (d = descriptor_list; d != null; d = d->next ) {
+	for (d = descriptor_list; d != NULL; d = d->next ) {
     if (d->connected == CON_PLAYING && !IS_NPC(d->character ) ) {
         if (d->character->jouster1 == 1)
 			{
@@ -98,11 +98,11 @@ char arg1 [MAX_INPUT_LENGTH];
 	}
 
 	if (jouster1_count == 0) {
-        jouster1 = null;
+        jouster1 = NULL;
     }
 
 	if (jouster2_count == 0) {
-        jouster2 = null;
+        jouster2 = NULL;
     }
 
 
@@ -134,16 +134,16 @@ char arg1 [MAX_INPUT_LENGTH];
             return;
         }
 
-        if (jouster1 != null || jouster2 != null) {
+        if (jouster1 != NULL || jouster2 != NULL) {
             send_to_char("It appears there is a joust in progress already. Use joust end.\n\r", ch);
             return;
         }
 
         // Locate the chars
-        jouster1 = get_char_world(ch, arg2, false);
-        jouster2 = get_char_world(ch, arg3, false);
+        jouster1 = get_char_world(ch, arg2, FALSE);
+        jouster2 = get_char_world(ch, arg3, FALSE);
 
-        if (jouster1 == null || jouster2 == null) {
+        if (jouster1 == NULL || jouster2 == NULL) {
             send_to_char("They aren't here.\n\r", ch);
             return;
         }
@@ -154,7 +154,7 @@ char arg1 [MAX_INPUT_LENGTH];
 		jouster1->in_joust = 1;
 		jouster2->in_joust = 1;
 
-		for (d = descriptor_list; d != null; d = d->next )
+		for (d = descriptor_list; d != NULL; d = d->next )
 			{
                 if (d->connected == CON_PLAYING && !IS_NPC(d->character ) )
 				{
@@ -183,7 +183,7 @@ char arg1 [MAX_INPUT_LENGTH];
 		char_from_room(jouster2);
 		char_to_room(jouster2, get_room_index(1903));
 
-		for (d = descriptor_list; d != null; d = d->next )
+		for (d = descriptor_list; d != NULL; d = d->next )
 		{
             if (d->connected == CON_PLAYING && !IS_NPC(d->character ) )
 			{
@@ -211,7 +211,7 @@ char arg1 [MAX_INPUT_LENGTH];
             return;
         }
 
-		if (jouster1 == null || jouster2 == null) {
+		if (jouster1 == NULL || jouster2 == NULL) {
             send_to_char("It appears you no longer have an opponent.\n\r", ch);
             return;
         }
@@ -292,7 +292,7 @@ char arg1 [MAX_INPUT_LENGTH];
             return;
         }
 
-		if (jouster1 == null || jouster2 == null) {
+		if (jouster1 == NULL || jouster2 == NULL) {
             send_to_char("It appears you no longer have an opponent.\n\r", ch);
             return;
         }
@@ -316,7 +316,7 @@ char arg1 [MAX_INPUT_LENGTH];
 
 		send_to_char("You ready yourself for the joust!\n\r", ch);
 
-		for (d = descriptor_list; d != null; d = d->next ) {
+		for (d = descriptor_list; d != NULL; d = d->next ) {
             if (d->connected == CON_PLAYING && !IS_NPC(d->character ) ) {
                 if (d->character->in_room->vnum == 1900) {
                     if (d->character != ch) {
@@ -340,12 +340,12 @@ char arg1 [MAX_INPUT_LENGTH];
             return;
         }
 
-        if (jouster1 == null && jouster2 == null) {
+        if (jouster1 == NULL && jouster2 == NULL) {
             send_to_char("It would appear as though there is no joust in progress, or both participants have left.\n\r",
                 ch);
             return;
         } else {
-            if (jouster1 == null || jouster2 == null) {
+            if (jouster1 == NULL || jouster2 == NULL) {
                 send_to_char("It appears one of the jousters has bailed.\n\r", ch);
                 return;
             }
@@ -364,7 +364,7 @@ char arg1 [MAX_INPUT_LENGTH];
 
 		// Stage one -- initiation
 		if (jouster1->joust_ready == 1 && jouster2->joust_ready == 1){
-            for (d = descriptor_list; d != null; d = d->next ) {
+            for (d = descriptor_list; d != NULL; d = d->next ) {
                 if (d->connected == CON_PLAYING && !IS_NPC(d->character ) ) {
                     if (d->character->in_room->vnum == 1900 || d->character->in_joust == 1) {
                         send_to_char("A horn sounds above you and the horses begin to charge!  The joust begins!\n\r",
@@ -417,7 +417,7 @@ char arg1 [MAX_INPUT_LENGTH];
 				send_to_char(buf, jouster2);
 
 
-				for (d = descriptor_list; d != null; d = d->next )
+				for (d = descriptor_list; d != NULL; d = d->next )
 				{
                     if (d->connected == CON_PLAYING && !IS_NPC(d->character ) )
 					{
@@ -436,7 +436,7 @@ char arg1 [MAX_INPUT_LENGTH];
                     sprintf(buf, "{GYou dodge %s's attack just in time, and land a blow!{x\n\r", jouster1->name);
 					send_to_char(buf, jouster2);
 
-					for (d = descriptor_list; d != null; d = d->next )
+					for (d = descriptor_list; d != NULL; d = d->next )
 					{
                         if (d->connected == CON_PLAYING && !IS_NPC(d->character ) )
 						{
@@ -451,12 +451,12 @@ char arg1 [MAX_INPUT_LENGTH];
 
 					sprintf(buf, "{r%s dodges your attack just in time, and lands a blow!{x\n\r", jouster2->name);
 					send_to_char(buf, jouster1);
-					raw_damage(jouster1, jouster1, 200, TYPE_UNDEFINED, DAM_NONE, false, true);
+					raw_damage(jouster1, jouster1, 200, TYPE_UNDEFINED, DAM_NONE, FALSE, TRUE);
 				} else {
                     sprintf(buf, "{GYou dodge %s's attack just in time, and land a blow!{x\n\r", jouster2->name);
 					send_to_char(buf, jouster1);
 
-					for (d = descriptor_list; d != null; d = d->next ) {
+					for (d = descriptor_list; d != NULL; d = d->next ) {
                         if (d->connected == CON_PLAYING && !IS_NPC(d->character ) ) {
                             if (d->character->in_room->vnum == 1900 && d->character->in_joust == 0) {
                                 sprintf(buf, "%s dodges %s's attack just in time, and lands a blow!{x\n\r",
@@ -468,7 +468,7 @@ char arg1 [MAX_INPUT_LENGTH];
 
 					sprintf(buf, "{r%s dodges your attack just in time, and lands a blow!{x\n\r", jouster1->name);
 					send_to_char(buf, jouster2);
-					raw_damage(jouster2, jouster2, 200, TYPE_UNDEFINED, DAM_NONE, false, true);
+					raw_damage(jouster2, jouster2, 200, TYPE_UNDEFINED, DAM_NONE, FALSE, TRUE);
 				}
 			}
 
@@ -485,7 +485,7 @@ char arg1 [MAX_INPUT_LENGTH];
                     jouster2->joust_attack, jouster1->name, jouster1->joust_attack);
 				send_to_char(buf, jouster2);
 
-				for (d = descriptor_list; d != null; d = d->next )
+				for (d = descriptor_list; d != NULL; d = d->next )
 				{
                     if (d->connected == CON_PLAYING && !IS_NPC(d->character ) )
 					{
@@ -501,7 +501,7 @@ char arg1 [MAX_INPUT_LENGTH];
 
 				sprintf(buf, "{rYou feel a blinding pain as %s lands a blow!{x\n\r", jouster1->name);
 				send_to_char(buf, jouster2);
-				raw_damage(jouster2, jouster2, 200, TYPE_UNDEFINED, DAM_NONE, false, true);
+				raw_damage(jouster2, jouster2, 200, TYPE_UNDEFINED, DAM_NONE, FALSE, TRUE);
 			}
 
 			else  if (jouster2->joust_win == 1 && jouster1->joust_win == 0)
@@ -516,7 +516,7 @@ char arg1 [MAX_INPUT_LENGTH];
                     jouster1->joust_attack, jouster2->name, jouster2->joust_attack);
 				send_to_char(buf, jouster1);
 
-				for (d = descriptor_list; d != null; d = d->next )
+				for (d = descriptor_list; d != NULL; d = d->next )
 				{
                     if (d->connected == CON_PLAYING && !IS_NPC(d->character ) )
 					{
@@ -532,7 +532,7 @@ char arg1 [MAX_INPUT_LENGTH];
 
 				sprintf(buf, "{rYou feel a blinding pain as %s lands a blow!{x\n\r", jouster2->name);
 				send_to_char(buf, jouster1);
-				raw_damage(jouster1, jouster1, 200, TYPE_UNDEFINED, DAM_NONE, false, true);
+				raw_damage(jouster1, jouster1, 200, TYPE_UNDEFINED, DAM_NONE, FALSE, TRUE);
 			}
 
 			else
@@ -556,7 +556,7 @@ char arg1 [MAX_INPUT_LENGTH];
         jouster1->position == POS_DEAD ||
         IS_AFFECTED2(jouster1, AFF_GHOST))
 			{
-                for (d = descriptor_list; d != null; d = d->next )
+                for (d = descriptor_list; d != NULL; d = d->next )
 				{
                     if (d->connected == CON_PLAYING && !IS_NPC(d->character ) )
 					{
@@ -577,7 +577,7 @@ char arg1 [MAX_INPUT_LENGTH];
 				char_from_room(jouster2);
 				char_to_room(jouster2, get_room_index(1900));
 
-				for (d = descriptor_list; d != null; d = d->next )
+				for (d = descriptor_list; d != NULL; d = d->next )
 				{
                     if (d->connected == CON_PLAYING && !IS_NPC(d->character ))
 					{
@@ -600,7 +600,7 @@ char arg1 [MAX_INPUT_LENGTH];
 			else if (jouster2->position == POS_UNCONSCIOUS ||
                     jouster2->position == POS_DEAD ||
                     IS_AFFECTED2(jouster2, AFF_GHOST)){
-                for (d = descriptor_list; d != null; d = d->next ){
+                for (d = descriptor_list; d != NULL; d = d->next ){
                     if (d->connected == CON_PLAYING && !IS_NPC(d->character ) ){
                         if (d->character->in_room->vnum == 1900 && d->character->in_joust == 0){
                             sprintf(buf, "{Y%s wins the joust!{x\n\r", jouster1->name);
@@ -618,7 +618,7 @@ char arg1 [MAX_INPUT_LENGTH];
 				char_from_room(jouster2);
 				char_to_room(jouster2, get_room_index(1900));
 
-				for (d = descriptor_list; d != null; d = d->next ){
+				for (d = descriptor_list; d != NULL; d = d->next ){
                     if (d->connected == CON_PLAYING && !IS_NPC(d->character )){
                         if (d->character->in_joust == 1){
                             d->character->joust_attack = &str_empty[0];
@@ -634,7 +634,7 @@ char arg1 [MAX_INPUT_LENGTH];
 
 				return;
 			} else {
-                for (d = descriptor_list; d != null; d = d->next ) {
+                for (d = descriptor_list; d != NULL; d = d->next ) {
                     if (d->connected == CON_PLAYING && !IS_NPC(d->character ) ) {
                         if (d->character->in_room->vnum == 1900 && d->character->in_joust == 0) {
                             send_to_char("Another horn rings out across the arena and the horses trot back into position.\n\r",
@@ -674,12 +674,12 @@ char arg1 [MAX_INPUT_LENGTH];
             return;
         }
 
-        if (jouster1 == null && jouster2 == null) {
+        if (jouster1 == NULL && jouster2 == NULL) {
             send_to_char("There... doesn't appear to be a joust in progress that you can end.", ch);
             return;
         }
 
-        for (d = descriptor_list; d != null; d = d->next ) {
+        for (d = descriptor_list; d != NULL; d = d->next ) {
             if (d->connected == CON_PLAYING && !IS_NPC(d->character )) {
                 if (d->character->in_joust == 1) {
                     d->character->joust_attack = &str_empty[0];
@@ -692,10 +692,10 @@ char arg1 [MAX_INPUT_LENGTH];
             }
         }
 
-		jouster1 = null;
-		jouster2 = null;
+		jouster1 = NULL;
+		jouster2 = NULL;
 
-		for (d = descriptor_list; d != null; d = d->next ){
+		for (d = descriptor_list; d != NULL; d = d->next ){
             if (d->connected == CON_PLAYING && !IS_NPC(d->character ) ){
                 if (d->character->in_room->vnum == 1900 && d->character != ch){
                     sprintf(buf, "%s has ended the joust.\n\r", ch->name);
@@ -718,17 +718,17 @@ char arg1 [MAX_INPUT_LENGTH];
         send_to_char("==============================================================================\n\r", ch);
         send_to_char("                               Current Jousters                               \n\r", ch);
         send_to_char("==============================================================================\n\r", ch);
-        if (jouster1 != null) {
+        if (jouster1 != NULL) {
             sprintf(buf, "Jouster 1: %s -- %d HP\n\r", jouster1->name, jouster1->hit);
 		send_to_char(buf, ch);
 		}
 
-        if (jouster2 != null) {
+        if (jouster2 != NULL) {
             sprintf(buf, "Jouster 2: %s -- %d HP\n\r", jouster2->name, jouster2->hit);
 		send_to_char(buf, ch);
 		}
 
-        if (jouster1 == null && jouster2 == null) {
+        if (jouster1 == NULL && jouster2 == NULL) {
             send_to_char("There is currently no joust in progress.\n\r", ch);
         }
         send_to_char("==============================================================================\n\r", ch);
