@@ -182,7 +182,8 @@ void clanEstablish( CHAR_DATA* ch, char* argument )
       newClanLeader->cln_name = str_dup( newClanName );
       newClanLeader->cln_symbol = str_dup( newClanSymbol );
 
-      sprintf( buf, "You have established the Coalition clan %s with %s as its leader and %s as its symbol.\n\r", newClanLeader->cln_name, newClanLeader->cln_leader, newClanLeader->cln_symbol );
+      sprintf( buf, "You have established the Coalition clan %s with %s as its leader and %s as its symbol.\n\r", 
+      newClanLeader->cln_name, newClanLeader->cln_leader, newClanLeader->cln_symbol );
       send_to_char( buf, ch );
 
       sprintf( buf, "You are now the leader of clan %s, with %s as its symbol.\n\r", newClanLeader->cln_name, newClanLeader->cln_symbol );
