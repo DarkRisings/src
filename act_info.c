@@ -3003,11 +3003,11 @@ char* whoLine( CHAR_DATA* ch, CHAR_DATA* looker )
 		sprintf(chPretitle, "[%14s] ", ch->pcdata->pretitle);
 	} else if (ch->race == race_lookup("seraph")) {
 		sprintf(chPretitle, "[{cSeraph{x    %s]", chClass);
+	} else {
+		sprintf(chPretitle, "[%2d {c%6s{x {%s%2s{x] ", ch->level, pc_race_table[ch->race].who_name, class_table[ch->class].cls_color, chClass);
 	}
 
-    sprintf(chPretitle, "[%2d {c%6s{x {%s%2s{x] ", ch->level, pc_race_table[ch->race].who_name, class_table[ch->class].cls_color, chClass);
-
-
+    
     if (!IS_NPC(ch) && ch->pcdata->pcClan != NULL) {
         sprintf(chClan, "[%s] ", ch->pcdata->pcClan->symbol);
     }
@@ -3230,9 +3230,13 @@ void do_who( CHAR_DATA *ch, char *argument )
 
     output = new_buf();
 
-	add_buf(output, ":----------------------------------------------------------------------------------:\n\r");
-	add_buf(output, "[/][\\][/][\\][/][\\][/][\\][/][\\][/] Denizens in Rhia [/][\\][/][\\][/][\\][/][\\][/][\\][/]\n\r");
-	add_buf(output, ":----------------------------------------------------------------------------------:\n\r");
+	add_buf(output, "{D:{B----------------------------------------------------------------------------------{D:\n\r");
+	add_buf(output, 
+		concat("{B[{D/{B]{D[{B\\{D]{B[{D/{B]{D[{B\\{D]{B[{D/{B]{D[{B\\{D]{B[{D/{B]{D[{B\\{D]{B[{D/{B]{D[{B\\{D]{D[{B/{D]{W", 
+			   "Denizens in Rhia ",
+			   "{B[{D/{B]{D[{B\\{D]{B[{D/{B]{D[{B\\{D]{B[{D/{B]{D[{B\\{D]{B[{D/{B]{D[{B\\{D]{B[{D/{B]{D[{B\\{D]{D[{B/{D]\n\r"
+	));
+	add_buf(output, "{D:{B----------------------------------------------------------------------------------{D:\n\r");
 
     for ( d = descriptor_list; d != NULL; d = d->next ) {
 		if (d->connected != CON_PLAYING || !can_see(ch, d->character)) {
@@ -3271,7 +3275,7 @@ void do_who( CHAR_DATA *ch, char *argument )
 		}
     }
 
-	add_buf(output, ":----------------------------------------------------------------------------------:\n\r");
+	add_buf(output, "{D:{B----------------------------------------------------------------------------------{D:{X\n\r");
     sprintf(buf, "\n\rPlayers found: %d\n\r", nMatch);
     add_buf( output, buf );
     page_to_char( buf_string( output ), ch );
