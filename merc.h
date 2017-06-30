@@ -648,6 +648,7 @@ struct	class_type
 {
     char *	name;			/* the full name of the class   */
     char 	who_name	[4];	/* Three-letter name for 'who'	*/
+	char cls_color[2];			 /* The color the class shows as in who */
     sh_int	attr_prime;		/* Prime attribute		*/
     sh_int	attr_sec;		/* Secondary Attribute *Kyuss*  */
     sh_int	weapon;			/* First weapon			*/

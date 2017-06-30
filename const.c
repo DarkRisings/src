@@ -707,97 +707,97 @@ const	struct	pc_race_type	pc_race_table	[]	=
 const	struct	class_type	class_table	[MAX_CLASS]	=
 {
     {
-	"mage",       "Mag",  STAT_INT, STAT_WIS,  OBJ_VNUM_SCHOOL_STAFF,
+	"mage",       "Mag", "r",  STAT_INT, STAT_WIS,  OBJ_VNUM_SCHOOL_STAFF,
 	{ 3018, 9618 },  75,  20, 0,  8,  10, TRUE,
 	"mage basics", "mage default",
         2,      &gsn_vorpalspell
     },
 
     {
-	"cleric",     "Cle",  STAT_WIS, STAT_INT,  OBJ_VNUM_SCHOOL_MACE,
+	"cleric",     "Cle", "C",  STAT_WIS, STAT_INT,  OBJ_VNUM_SCHOOL_MACE,
 	{ 3003, 9619 },  75,  20, -5,  10, 12, TRUE,
 	"cleric basics", "cleric default",
         2,      &gsn_vorpalspell
     },
 
     {
-	"monk",       "Mon",  STAT_DEX, STAT_WIS,  0,
+	"monk",       "Mon", "W",  STAT_DEX, STAT_WIS,  0,
 	{ 3340, 9717 },  75,  15, -24,  12, 15, FALSE,
 	"monk basics", "monk default",
         3,      &gsn_vorpalspell
     },
 
     {
-	"warrior",    "War",  STAT_STR, STAT_DEX,  OBJ_VNUM_SCHOOL_SWORD,
+	"warrior",    "War", "R",  STAT_STR, STAT_DEX,  OBJ_VNUM_SCHOOL_SWORD,
 	{ 3022, 9633 },  75,  16,  -24,  14, 16, FALSE,
 	"warrior basics", "warrior default",
         4,      &gsn_vorpalspell
     },
 
     {
-        "barbarian",  "Bar",  STAT_CON, STAT_STR,  OBJ_VNUM_SCHOOL_AXE,
+        "barbarian",  "Bar", "y",  STAT_CON, STAT_STR,  OBJ_VNUM_SCHOOL_AXE,
         { 3333, 9712 }, 75,   25,  -25,  15, 17, FALSE, 
         "barbarian basics", "barbarian default",
         5,      NULL
     },
     
     { 
-        "psionicist", "Psi",  STAT_INT, STAT_CON,  OBJ_VNUM_SCHOOL_WHIP,
+        "psionicist", "Psi", "m",  STAT_INT, STAT_CON,  OBJ_VNUM_SCHOOL_WHIP,
         { 3008, 9714 }, 75,   20,    0,   9,  12,  TRUE,  
         "psionicist basics", "psionicist default",
         2,      &gsn_vorpalspell
     },
 
     {
-        "druid",      "Dru",  STAT_WIS, STAT_DEX, OBJ_VNUM_SCHOOL_POLEARM,
+        "druid",      "Dru", "G",  STAT_WIS, STAT_DEX, OBJ_VNUM_SCHOOL_POLEARM,
         { 3342, 9716 }, 75,   20,   -5,  9,  12,  TRUE,
         "druid basics",       "druid default",
         2,      &gsn_vorpalspell
     },
     
     {
-        "ranger",     "Ran",  STAT_WIS, STAT_STR,  OBJ_VNUM_SCHOOL_SPEAR,     
+        "ranger",     "Ran", "g",  STAT_WIS, STAT_STR,  OBJ_VNUM_SCHOOL_SPEAR,     
         { 3337, 9751 }, 75,   16,  -24,  14, 16,  FALSE,
         "ranger basics",      "ranger default",
         5,      &gsn_vorpalspell
     },
   
     {
-        "rogue",      "Rog",  STAT_DEX, STAT_CON,  OBJ_VNUM_SCHOOL_DAGGER,
+        "rogue",      "Rog", "D",  STAT_DEX, STAT_CON,  OBJ_VNUM_SCHOOL_DAGGER,
         { 3028, 9639 }, 75,   18,   -18,  11,  14,  FALSE,
         "rogue basics",       "rogue default",
         3,      NULL
     },
     
     { 
-        "bard",       "Brd",  STAT_DEX, STAT_INT,  OBJ_VNUM_SCHOOL_FLAIL,
+        "bard",       "Brd", "M",  STAT_DEX, STAT_INT,  OBJ_VNUM_SCHOOL_FLAIL,
         { 3338, 9708 }, 75,   16,   -16,  10,  13,  TRUE,
         "bard basics",        "bard default",
         3,      &gsn_vorpalspell
     },
     
     {
-        "wildmage",   "Wmg",  STAT_INT, STAT_DEX,  OBJ_VNUM_SCHOOL_WHIP,
+        "wildmage",   "Wmg", "C",  STAT_INT, STAT_DEX,  OBJ_VNUM_SCHOOL_WHIP,
 	{ 3080, 1202 },  75,  20, 6,  8,  11, TRUE,
 	"wild basics", "wild default",
         2,      &gsn_vorpalspell
     },
 
     {
-        "warlock",   "Wlk",  STAT_INT, STAT_STR,  OBJ_VNUM_SCHOOL_POLEARM,
+        "warlock",   "Wlk", "b",  STAT_INT, STAT_STR,  OBJ_VNUM_SCHOOL_POLEARM,
 	{ 3081, 1202 },  75,  19,   -17,  10,  13, TRUE,
 	"warlock basics", "warlock default",
         3,      &gsn_vorpalspell
     },
     
     {
-        "necromancer", "Nec", STAT_INT, STAT_WIS, OBJ_VNUM_SCHOOL_STAFF,
+        "necromancer", "Nec", "Y", STAT_INT, STAT_WIS, OBJ_VNUM_SCHOOL_STAFF,
         {3351, 9570}, 75, 20, 0, 8, 10, TRUE,
 	"necro basics", "necro default",
         2,      &gsn_vorpalspell
     },
 
-    {   "templar", "Tem", STAT_CON, STAT_WIS, OBJ_VNUM_SCHOOL_SPEAR,
+    {   "templar", "Tem", "w", STAT_CON, STAT_WIS, OBJ_VNUM_SCHOOL_SPEAR,
 	{3058, 1226}, 75, 16, -24, 14, 16, FALSE,
 	"templar basics", "templar default",
         3,      &gsn_vorpalspell
