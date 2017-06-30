@@ -3004,7 +3004,7 @@ char* whoLine( CHAR_DATA* ch, CHAR_DATA* looker )
 	} else if (ch->race == race_lookup("seraph")) {
 		sprintf(chPretitle, "{b[{cSeraph{x    %s{b]{x", chClass);
 	} else {
-		sprintf(chPretitle, "{b[%2d {c%6s{x {%s%2s{x{b]{x ", ch->level, pc_race_table[ch->race].who_name, class_table[ch->class].cls_color, chClass);
+		sprintf(chPretitle, "{b[{W%2d {c%6s{x {%s%2s{x{b]{x ", ch->level, pc_race_table[ch->race].who_name, class_table[ch->class].cls_color, chClass);
 	}
 
     
