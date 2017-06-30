@@ -2964,123 +2964,61 @@ void do_help( CHAR_DATA *ch, char *argument )
 
 char* whoLine( CHAR_DATA* ch, CHAR_DATA* looker )
 {
-  char IMMCLASSES[9][4] = { "IMP", "CRE", "SUP", "DEI", "GOD", "IMM", "DEM", "ANG", "AVA" };
-  char BRAWLER[] = "{D[B]{x ";
-  char QUEST[] = "(QUEST) ";
-  char AFK[] = "[AFK] ";
-  char VEILED[] = "({rVeiled{x) ";
-  char WANTED[] = "(WANTED) ";
-  char GHOST[] = "(GHOST) ";
-  char UNAPPROVED[] = "(UA) ";
-  char NEWBIE[] = "[{G+{x] ";
-  char LEVEL_AR[] = "AR";
-  char LEVEL_BR[] = "BR";
-  char LEVEL_NB[] = "NB";
-  char LEVEL_IR[] = "IR";
-  bool showBrawler = FALSE;
- 
-  char* relativeLevel = NULL;
-  const char* chClass = NULL;
-  char* chLineItem;
+    char IMMCLASSES[9][4] = { "IMP", "CRE", "SUP", "DEI", "GOD", "IMM", "DEM", "ANG", "AVA" };
+    char BRAWLER[] = "{D[B]{x ";
+    char QUEST[] = "(QUEST) ";
+    char AFK[] = "[AFK] ";
+    char VEILED[] = "({rVeiled{x) ";
+    char WANTED[] = "(WANTED) ";
+    char GHOST[] = "(GHOST) ";
+    char UNAPPROVED[] = "(UA) ";
+    char NEWBIE[] = "[{G+{x] ";
+    bool showBrawler = FALSE;
+    const char* chClass = NULL;
+    char* chLineItem;
+    char chPretitle[ MAX_INPUT_LENGTH ] = "";
+    char chIncog[ MAX_INPUT_LENGTH ] = "";
+    char chWizi[ MAX_INPUT_LENGTH ] = "";
+    char chClan[ MAX_INPUT_LENGTH ] = "";
 
-  char chPretitle[ MAX_INPUT_LENGTH ] = "";
-  char chIncog[ MAX_INPUT_LENGTH ] = "";
-  char chWizi[ MAX_INPUT_LENGTH ] = "";
-  char chClan[ MAX_INPUT_LENGTH ] = "";
+    chLineItem = ( char* )malloc( sizeof( char ) * MAX_INPUT_LENGTH );
 
-  chLineItem = ( char* )malloc( sizeof( char ) * MAX_INPUT_LENGTH );
-  if( chLineItem == NULL )
-    return NULL;
-
-  /* determine AR/IR/BR/NB/level */
-  if( ch != looker )
-    {
-      if( IS_IMMORTAL( looker ) )
-	{
-	  relativeLevel = NULL;
-	}
-      else if( ch->level < 11 )
-	{
-	  relativeLevel = LEVEL_NB;
-	}
-      else if( abs( ch->level - looker->level ) < 7 || ( looker->level == 43 && ch->level == 50 ) )
-	{
-	  relativeLevel = LEVEL_IR;
-	}
-      else if( ch->level > looker->level )
-	{
-	  relativeLevel = LEVEL_AR;
-	}
-      else
-	{
-	  relativeLevel = LEVEL_BR;
-	}
+    if( chLineItem == NULL ) {
+        return NULL;
     }
 
-  if( IS_IMMORTAL( ch ) )
-    {
-      chClass = IMMCLASSES[ 60 - ch->level ];
-    }
-  else
-    {
-      chClass = class_table[ ch->class ].who_name;
+    sprintf(chPretitle, "[%2d {g%6s{x %2s] ", ch->level, pc_race_table[ch->race].who_name, chClass);
+
+
+    if (!IS_NPC(ch) && ch->pcdata->pcClan != NULL) {
+        sprintf(chClan, "[%s] ", ch->pcdata->pcClan->symbol);
     }
 
-  if( ch->incog_level >= LEVEL_HERO )
-    sprintf( chIncog, "(Incog %d) ", ch->incog_level );
-
-  if( ch->invis_level >= LEVEL_HERO )
-    sprintf( chWizi, "(Wizi %d) ", ch->invis_level );
-
-  if( !IS_NULLSTR( ch->pcdata->pretitle ) )
+    if ((IS_SET(looker->act_bits, PLR_BRAWLER ) || IS_IMMORTAL( looker ))
+        && IS_SET( ch->act_bits, PLR_BRAWLER ) )
     {
-      sprintf( chPretitle, "[%14s] ", ch->pcdata->pretitle );
-    }
-  else if( ch->race == race_lookup( "seraph" ) )
-    {
-      sprintf( chPretitle, "[{cSeraph{x    %s]", chClass );
-    }
-  else
-    {
-      if( relativeLevel == NULL )
-	{
-	  sprintf( chPretitle, "[%2d %6s %2s] ", ch->level, pc_race_table[ ch->race ].who_name, chClass );
-	}
-      else
-	{
-	  sprintf( chPretitle, "[%2s %6s %2s] ", relativeLevel, pc_race_table[ ch->race ].who_name, chClass );
-	}
-    }
-  
-  if( !IS_NPC( ch ) && ch->pcdata->pcClan != NULL )
-    {
-      sprintf( chClan, "[%s] ", ch->pcdata->pcClan->symbol );
+        showBrawler = TRUE;
     }
 
-  if( ( IS_SET( looker->act_bits, PLR_BRAWLER ) || IS_IMMORTAL( looker ) ) &&
-      IS_SET( ch->act_bits, PLR_BRAWLER ) )
-    {
-      showBrawler = TRUE;
-    }
+    snprintf(chLineItem, MAX_INPUT_LENGTH, "%s %s%s%s%s%s%s%s%s%s%s%s%s%s%s\n\r",
+        chPretitle,
+        chIncog,
+        chWizi,
+        IS_AFFECTED3(ch, AFF_VEIL) ? VEILED : "",
+        guild_table[ch->guild].who_name,
+        IS_SET(ch->act_bits, PLR_QUEST) ? QUEST : "",
+        IS_SET(ch->comm, COMM_AFK) ? AFK : "",
+        IS_AFFECTED2(ch, AFF_WANTED) ? WANTED : "",
+        IS_AFFECTED2(ch, AFF_GHOST) ? GHOST : "",
+        IS_SET(ch->act_bits, ACT_NOAPPROVE) ? UNAPPROVED : "",
+        IS_SET(ch->act_bits, PLR_NEWBIE) ? NEWBIE : "",
+        showBrawler ? BRAWLER : "",
+        chClan,
+        ch->name,
+        IS_NPC(ch) ? "" : ch->pcdata->title
+    );
 
-  snprintf( chLineItem, MAX_INPUT_LENGTH, "%s %s%s%s%s%s%s%s%s%s%s%s%s%s%s\n\r",
-	    chPretitle,
-	    chIncog,
-	    chWizi,
-	    IS_AFFECTED3( ch, AFF_VEIL ) ? VEILED : "",
-	    guild_table[ ch->guild ].who_name,
-	    IS_SET( ch->act_bits, PLR_QUEST ) ? QUEST : "",
-	    IS_SET( ch->comm, COMM_AFK ) ? AFK : "",
-	    IS_AFFECTED2( ch, AFF_WANTED ) ? WANTED : "",
-	    IS_AFFECTED2( ch, AFF_GHOST ) ? GHOST : "",
-	    IS_SET( ch->act_bits, ACT_NOAPPROVE ) ? UNAPPROVED : "",
-	    IS_SET( ch->act_bits, PLR_NEWBIE ) ? NEWBIE : "",
-	    showBrawler ? BRAWLER : "",
-	    chClan,
-	    ch->name,
-	    IS_NPC( ch ) ? "" : ch->pcdata->title );
-
-  return chLineItem;
+    return chLineItem;
 }
   
 
@@ -3150,237 +3088,193 @@ void do_who( CHAR_DATA *ch, char *argument )
   CHAR_DATA* wch = NULL;
   BUFFER* output = NULL;
 
-  for ( iClass = 0; iClass < MAX_CLASS; iClass++ )
-    rgfClass[iClass] = FALSE;
+  for ( iClass = 0; iClass < MAX_CLASS; iClass++ ) {
+      rgfClass[iClass] = FALSE;
+  }
 
-  for ( iRace = 0; iRace < MAX_PC_RACE; iRace++ )
-    rgfRace[iRace] = FALSE;
 
-  for (iGuild = 0; iGuild < MAX_GUILD; iGuild++)
-    rgfGuild[iGuild] = FALSE;
- 
-  /*
-   * Parse arguments.
-   */
+  for ( iRace = 0; iRace < MAX_PC_RACE; iRace++ ) {
+      rgfRace[iRace] = FALSE;
+  }
 
-  while( !IS_NULLSTR( argument ) )
-    {
+
+  for (iGuild = 0; iGuild < MAX_GUILD; iGuild++) {
+      rgfGuild[iGuild] = FALSE;
+  }
+
+
+    while( !IS_NULLSTR( argument ) ) {
       argument = one_argument( argument, arg );
       argument = one_argument( argument, arg2 );
 
-      if( !IS_NULLSTR( arg ) )
-	{
-	  if( !strcasecmp( arg, "AR" ) )
-	    {
-	      if( ch->level > 43 )
-		{
-		  send_to_char( "Players found: 0\n\r", ch );
-		  return;
-		}
-	      
-	      iLevelLower = ( ch->level + 7 );
-	      iLevelUpper = 50;
-	      
-	      if( iLevelLower >= iLevelUpper )
-		{
-		  send_to_char( "Players found: 0\n\r", ch );
-		  return;
-		}
-	    }
-	  else if( !strcasecmp( arg, "IR" ) )
-	    {
-	      if( ch->level < 11 )
-		{
-		  send_to_char( "Players found: 0\n\r", ch );
-		  return;
-		}
-	      
-	      iLevelLower = ch->level - 6;
-	      
-	      /* This is strange.  If you are level 43, level 50s appear as IR
-		 to you, but to a level 50, level 43s are BR.  Silly, but
-		 whatever.  Ask Mark. */
-	      iLevelUpper = ( ch->level == 43 ) ? 50 : ( ch->level + 6 );
+      if( !IS_NULLSTR( arg ) ) {
+        if( !strcasecmp( arg, "AR" ) ) {
+          if( ch->level > 43 ) {
+            send_to_char( "Players found: 0\n\r", ch );
+            return;
+          }
 
-	      if (iLevelUpper > 50)
-		iLevelUpper = 50;		 
-	    }
-	  else if( !strcasecmp( arg,"BR" ) )
-	    {
-	      if (ch->level < 11)
-		{
-		  send_to_char( "Players found: 0\n\r", ch );
-		  return;
-		}
-	      
-	      iLevelLower = 11;
-	      iLevelUpper = ch->level - 7;
-	      
-	      if( iLevelLower >= iLevelUpper )
-		{
-		  send_to_char( "Players found: 0\n\r", ch );
-		  return;
-		}
-	    }
-	  else if( !strcasecmp( arg, "NB" ) )
-	    {
-	      iLevelLower = 1;
-	      iLevelUpper = 10;
-	    }
-	  else if( !strcasecmp( arg, "UA" ) )
-	    {
-	      fUnapproved = TRUE;
-	    }
-	  else if( !strcasecmp(arg, "brawler" ) )
-	    {
-	      if( IS_IMMORTAL( ch ) || IS_SET( ch->act_bits,PLR_BRAWLER ) )
-		{
-		  fBrawler = TRUE;
-		}
-	      else
-		{
-		  send_to_char( "Players found: 0\n\r", ch );
-		  return;
-		}
-	    }
-	  else if( is_number( arg ) )
-	    {
-	      if( IS_IMMORTAL( ch ) )
-		{
-		  iLevelLower = atoi( arg );
+          iLevelLower = ( ch->level + 7 );
+          iLevelUpper = 50;
 
-		  if( is_number( arg2 ) )
-		    {
-		      range_caught = TRUE;
-		      iLevelUpper = atoi( arg2 );
-		    }
-		  else
-		    {
-		      /* support for who X */
-		      iLevelUpper = iLevelLower;
-		    }
-		}
-	      else
-		{
-		  send_to_char( "Try {Gwho AR, who BR, or who IR.{x See \"help AR.\"", ch );
-		  return;
-		}
-	    }
-	  else if( !strcasecmp( arg, "quest" ) )
-	    {
-	      fQuestOnly = TRUE;
-	    }
-	  else if( !strcasecmp( arg, "newbie" ) )
-	    {
-	      fNewbieOnly = TRUE;
-	    }
-	  else if( !range_caught )
-	    {	      
-	      /*
-	       * Look for classes to turn on.
-	       */
-	      if( !str_prefix( arg, "immortals" ) )
-		{
-		  fImmortalOnly = TRUE;
-		} 
-	      else
-		{
-		  iClass = class_lookup( arg );
-		  
-		  if( iClass == -1 )
-		    {
-		      iRace = race_lookup(arg);
-		      
-		      if( iRace == 0 || iRace >= MAX_PC_RACE )
-			{
-			  if( !str_prefix( arg, "guild" ) )
-			    {
-			      /* your own guild */
-			      fOwnGuildRestrict = TRUE;
-			    }
-			  else
-			    {
-			      /* guild by name */
-			      iGuild = guild_lookup(arg);
-			      if( iGuild )
-				{
-				  fGuildRestrict = TRUE;
-				  rgfGuild[ iGuild ] = TRUE;
-				}
-			      else
-				{
-				  send_to_char( "That's not a valid race, class, or guild.\n\r",ch);
-				  return;
-				}
-			    }
-			}
-		      else
-			{
-			  fRaceRestrict = TRUE;
-			  rgfRace[ iRace ] = TRUE;
-			}
-		    }
-		  else
-		    {
-		      fClassRestrict = TRUE;
-		      rgfClass[ iClass ] = TRUE;
-		    }
-		}
-	    }
-	}
+          if( iLevelLower >= iLevelUpper ) {
+            send_to_char( "Players found: 0\n\r", ch );
+            return;
+          }
+        } else if( !strcasecmp( arg, "IR" ) ) {
+          if( ch->level < 11 ) {
+            send_to_char( "Players found: 0\n\r", ch );
+            return;
+          }
+
+          iLevelLower = ch->level - 6;
+
+          /* This is strange.  If you are level 43, level 50s appear as IR
+          to you, but to a level 50, level 43s are BR.  Silly, but
+          whatever.  Ask Mark. */
+          iLevelUpper = ( ch->level == 43 ) ? 50 : ( ch->level + 6 );
+
+          if (iLevelUpper > 50)
+          iLevelUpper = 50;
+        } else if( !strcasecmp( arg,"BR" ) ) {
+          if (ch->level < 11) {
+            send_to_char( "Players found: 0\n\r", ch );
+            return;
+          }
+
+          iLevelLower = 11;
+          iLevelUpper = ch->level - 7;
+
+          if( iLevelLower >= iLevelUpper ) {
+            send_to_char( "Players found: 0\n\r", ch );
+            return;
+          }
+        } else if( !strcasecmp( arg, "NB" ) ) {
+          iLevelLower = 1;
+          iLevelUpper = 10;
+        } else if( !strcasecmp( arg, "UA" ) ) {
+          fUnapproved = TRUE;
+        } else if( !strcasecmp(arg, "brawler" ) ) {
+          if( IS_IMMORTAL( ch ) || IS_SET( ch->act_bits,PLR_BRAWLER ) ) {
+            fBrawler = TRUE;
+          } else {
+            send_to_char( "Players found: 0\n\r", ch );
+            return;
+          }
+        } else if( is_number( arg ) ) {
+          if( IS_IMMORTAL( ch ) ) {
+            iLevelLower = atoi( arg );
+
+            if( is_number( arg2 ) )  {
+              range_caught = TRUE;
+              iLevelUpper = atoi( arg2 );
+            } else {
+              /* support for who X */
+              iLevelUpper = iLevelLower;
+            }
+          } else {
+            send_to_char( "Try {Gwho AR, who BR, or who IR.{x See \"help AR.\"", ch );
+            return;
+          }
+        } else if( !strcasecmp( arg, "quest" ) ) {
+          fQuestOnly = TRUE;
+        } else if( !strcasecmp( arg, "newbie" ) ) {
+          fNewbieOnly = TRUE;
+        } else if( !range_caught ) {
+          /*
+          * Look for classes to turn on.
+          */
+          if( !str_prefix( arg, "immortals" ) ) {
+            fImmortalOnly = TRUE;
+          } else {
+            iClass = class_lookup( arg );
+
+            if( iClass == -1 ) {
+              iRace = race_lookup(arg);
+
+              if( iRace == 0 || iRace >= MAX_PC_RACE ) {
+                if( !str_prefix( arg, "guild" ) ) {
+                  /* your own guild */
+                  fOwnGuildRestrict = TRUE;
+                } else {
+                  iGuild = guild_lookup(arg);
+                  if(iGuild) {
+                    fGuildRestrict = TRUE;
+                    rgfGuild[ iGuild ] = TRUE;
+                  } else {
+                    send_to_char( "That's not a valid race, class, or guild.\n\r",ch);
+                    return;
+                  }
+                }
+              } else {
+                fRaceRestrict = TRUE;
+                rgfRace[ iRace ] = TRUE;
+              }
+            } else {
+              fClassRestrict = TRUE;
+              rgfClass[ iClass ] = TRUE;
+            }
+          }
+        }
+      }
     }
 
-  /*
-   * Now show matching chars.
-   */
+    /*
+    * Now show matching chars.
+    */
 
-  output = new_buf();
-  for ( d = descriptor_list; d != NULL; d = d->next )
+    output = new_buf();
+
+    sprintf(buf, ":----------------------------------------------------------------------------------:\n\r");
+    sprintf(buf, "[/][\\][/][\\][/][\\][/][\\][/][\\][/] Denizens in Rhia [/][\\][/][\\][/][\\][/][\\][/][\\][/]\n\r");
+    sprintf(buf, ":----------------------------------------------------------------------------------:\n\r");
+
+    for ( d = descriptor_list; d != NULL; d = d->next )
     {
       /*
-       * Check for match against restrictions.
-       * Don't use trust as that exposes trusted mortals.
-       */
+      * Check for match against restrictions.
+      * Don't use trust as that exposes trusted mortals.
+      */
       if ( d->connected != CON_PLAYING || !can_see( ch, d->character ) )
-	continue;
- 
+      continue;
+
       wch   = ( d->original != NULL ) ? d->original : d->character;
 
       if (!can_see(ch,wch))
-	continue;
+      continue;
 
       if ( wch->level < iLevelLower
-	   ||   wch->level > iLevelUpper
-	   || ( fImmortalOnly  && wch->level < LEVEL_IMMORTAL )
-	   || ( fClassRestrict && !rgfClass[wch->class] )
-	   || ( fRaceRestrict && !rgfRace[wch->race])
-	   || ( fOwnGuildRestrict && !is_guild(wch))
-	   || ( fGuildRestrict && !rgfGuild[wch->guild] )
-	   || ( fNewbieOnly && !IS_SET( wch->act_bits, PLR_NEWBIE ) ) 
-	   || ( fUnapproved && !IS_SET( wch->act_bits, ACT_NOAPPROVE ) ) 
-	   || ( fQuestOnly && !IS_SET( wch->act_bits, PLR_QUEST ) )
-	   || ( fBrawler && !IS_SET( wch->act_bits, PLR_BRAWLER ) )
-	   || ( !IS_IMMORTAL( ch ) && IS_AFFECTED3( wch, AFF_VEIL ) ) )
-	continue;
- 
+      ||   wch->level > iLevelUpper
+      || ( fImmortalOnly  && wch->level < LEVEL_IMMORTAL )
+      || ( fClassRestrict && !rgfClass[wch->class] )
+      || ( fRaceRestrict && !rgfRace[wch->race])
+      || ( fOwnGuildRestrict && !is_guild(wch))
+      || ( fGuildRestrict && !rgfGuild[wch->guild] )
+      || ( fNewbieOnly && !IS_SET( wch->act_bits, PLR_NEWBIE ) )
+      || ( fUnapproved && !IS_SET( wch->act_bits, ACT_NOAPPROVE ) )
+      || ( fQuestOnly && !IS_SET( wch->act_bits, PLR_QUEST ) )
+      || ( fBrawler && !IS_SET( wch->act_bits, PLR_BRAWLER ) )
+      || ( !IS_IMMORTAL( ch ) && IS_AFFECTED3( wch, AFF_VEIL ) ) )
+      continue;
+
       nMatch++;
-      
-      wchOneLine = whoLine( wch, ch );
-      
+
+      wchOneLine = whoLine(wch, ch);
+
       if( wchOneLine != NULL )
-	{
-	  add_buf( output, wchOneLine );
-	  free( wchOneLine );
-	  wchOneLine = NULL;
-	}
+      {
+        add_buf( output, wchOneLine );
+        free( wchOneLine );
+        wchOneLine = NULL;
+      }
     }
 
-  sprintf( buf, "\n\rPlayers found: %d\n\r", nMatch );
-  add_buf( output, buf );
-  page_to_char( buf_string( output ), ch );
-  
-  free_buf( output );
-  return;
+    sprintf(buf, "\n\rPlayers found: %d\n\r", nMatch);
+    add_buf( output, buf );
+    page_to_char( buf_string( output ), ch );
+
+    free_buf( output );
+    return;
 }
 
 void do_count ( CHAR_DATA *ch, char *argument )
