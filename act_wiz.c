@@ -3305,58 +3305,50 @@ void do_protect( CHAR_DATA *ch, char *argument)
   
 void do_transmogrify( CHAR_DATA* ch, char* argument )
 {
-  char vict_name[ MAX_INPUT_LENGTH ] = "";
-  char duration[ MAX_INPUT_LENGTH ] = "";
-  int ticks = -1;
-  CHAR_DATA* victim = 0;
-  AFFECT_DATA af;
+	char vict_name[ MAX_INPUT_LENGTH ] = "";
+	char duration[ MAX_INPUT_LENGTH ] = "";
+	int ticks = -1;
+	CHAR_DATA* victim = 0;
+	AFFECT_DATA af;
 
-  argument = one_argument( argument, vict_name );
-  one_argument( argument, duration );
+	argument = one_argument( argument, vict_name );
+	one_argument( argument, duration );
 
-  if ( victim == ch ) {
-	send_to_char("You're dumb. Don't do that. Seriously. No.\n\r", ch);
-	return;
+	if ( victim == ch ) {
+		send_to_char("You're dumb. Don't do that. Seriously. No.\n\r", ch);
+		return;
 	}
 	
-  if( vict_name[ 0 ] == '\0' )
-    {
-      send_to_char( "Transmogrify who?\n\r", ch );
-      return;
-    }
+	if( vict_name[ 0 ] == '\0' ) {
+		send_to_char( "Transmogrify who?\n\r", ch );
+		return;
+	}
 
-  if( duration[ 0 ] != '\0' )
-    ticks = atoi( duration ) - 1;
+	if( duration[ 0 ] != '\0' )
+		ticks = atoi( duration ) - 1;
 
-  victim = get_char_world( ch, vict_name, FALSE );
+	if ((victim = get_char_world(ch, vict_name, FALSE)) == NULL || (IS_NPC(victim))) {
+		send_to_char("They aren't here.\n\r", ch);
+	} else {
+		if (get_trust(victim) > get_trust(ch) || victim->name == "Zalyriel") {
+			send_to_char("You failed.  Miserably.\n\r", ch);
+		} else {
+			act("You summon immortal magic to transmogrify $N.", ch, NULL, victim, TO_CHAR);
+			act("$n summons immortal power and transforms you into a frog!", ch, NULL, victim, TO_VICT);
+			act("$n summons immortal magic and transmogrifies $N!", ch, NULL, victim, TO_ROOM);
 
-  if( IS_NPC( victim ) )
-    {
-      send_to_char( "Not on NPCs\n\r", ch );
-      return;
-    }
-  if ( get_trust( victim ) > get_trust ( ch ) || victim->name == "Zalyriel" ) // Because fuck that shit.
-  {
-      send_to_char( "You failed.  Miserably.\n\r", ch );
-      return;
-  } 
+			af.where = TO_AFFECTS;
+			af.type = -6;
+			af.level = ch->level;
+			af.duration = ticks;
+			af.modifier = 0;
+			af.location = APPLY_NONE;
+			af.bitvector = AFF_FROG;
+			affect_to_char3(victim, &af);
+		}
 
-  if (victim != NULL) {
-	  act("You summon immortal magic to transmogrify $N.", ch, NULL, victim, TO_CHAR);
-	  act("$n summons immortal power and transforms you into a frog!", ch, NULL, victim, TO_VICT);
-	  act("$n summons immortal magic and transmogrifies $N!", ch, NULL, victim, TO_ROOM);
-
-	  af.where = TO_AFFECTS;
-	  af.type = -6;
-	  af.level = ch->level;
-	  af.duration = ticks;
-	  af.modifier = 0;
-	  af.location = APPLY_NONE;
-	  af.bitvector = AFF_FROG;
-	  affect_to_char3(victim, &af);
-  }
- 
-
+		return;
+	}
 }
 
 void do_snoop( CHAR_DATA *ch, char *argument )
