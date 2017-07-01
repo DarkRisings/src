@@ -3341,18 +3341,20 @@ void do_transmogrify( CHAR_DATA* ch, char* argument )
       return;
   } 
 
-  act( "You summon immortal magic to transmogrify $N.", ch, NULL, victim, TO_CHAR );
-  act( "$n summons immortal power and transforms you into a frog!", ch, NULL, victim, TO_VICT );
-  act( "$n summons immortal magic and transmogrifies $N!", ch, NULL, victim, TO_ROOM );
+  if (victim != NULL) {
+	  act("You summon immortal magic to transmogrify $N.", ch, NULL, victim, TO_CHAR);
+	  act("$n summons immortal power and transforms you into a frog!", ch, NULL, victim, TO_VICT);
+	  act("$n summons immortal magic and transmogrifies $N!", ch, NULL, victim, TO_ROOM);
 
-  af.where = TO_AFFECTS;
-  af.type = -6;
-  af.level = ch->level;
-  af.duration = ticks;
-  af.modifier = 0;
-  af.location = APPLY_NONE;
-  af.bitvector = AFF_FROG;
-  affect_to_char3( victim, &af );
+	  af.where = TO_AFFECTS;
+	  af.type = -6;
+	  af.level = ch->level;
+	  af.duration = ticks;
+	  af.modifier = 0;
+	  af.location = APPLY_NONE;
+	  af.bitvector = AFF_FROG;
+	  affect_to_char3(victim, &af);
+  }
  
 
 }
