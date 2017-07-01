@@ -102,7 +102,7 @@ time_t		    current_time;	/* time of this pulse */
 bool		    MOBtrigger = TRUE;  /* act() switch                 */
 long                queststatus = 0;
 QUEST_INFO          global_quest_info = { "", 1, 50, 0 };
-
+int quad; // ticks of quad
 
 void	game_loop_unix		args( ( int control ) );
 int	init_socket		args( ( int port ) );
