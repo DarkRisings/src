@@ -3231,11 +3231,11 @@ void do_who( CHAR_DATA *ch, char *argument )
 
     output = new_buf();
 
-	add_buf(output, "{D:{B----------------------------------------------------------------------------------{D:\n\r");
-	add_buf(output, "{B[{D/{B]{B[{D\\{B]{B[{D/{B]{B[{D\\{B]{B[{D/{B]{B[{D\\{B]{B[{D/{B]{B[{D\\{B]{B[{D/{B]{B[{D\\{B]{B[{D/{B]{W");
+	add_buf(output, "{D:{B----------------------------------------------------------------------------{D:\n\r");
+	add_buf(output, "{B[{D/{B]{B[{D\\{B]{B[{D/{B]{B[{D\\{B]{B[{D/{B]{B[{D\\{B]{B[{D/{B]{B[{D\\{B]{B[{D/{B]{B[{D\\{B]{W");
 	add_buf(output, " Denizens in Rhia ");
-	add_buf(output, "{B[{D/{B]{B[{D\\{B]{B[{D/{B]{B[{D\\{B]{B[{D/{B]{B[{D\\{B]{B[{D/{B]{B[{D\\{B]{B[{D/{B]{B[{D\\{B]{B[{D/{B]\n\r");
-	add_buf(output, "{D:{B----------------------------------------------------------------------------------{D:\n\r");
+	add_buf(output, "{B[{D\\{B]{B[{D/{B]{B[{D\\{B]{B[{D/{B]{B[{D\\{B]{B[{D/{B]{B[{D\\{B]{B[{D/{B]{B[{D\\{B]{B[{D/{B]\n\r");
+	add_buf(output, "{D:{B----------------------------------------------------------------------------{D:\n\r");
 
     for ( d = descriptor_list; d != NULL; d = d->next ) {
 		if (d->connected != CON_PLAYING || !can_see(ch, d->character)) {
@@ -3275,11 +3275,12 @@ void do_who( CHAR_DATA *ch, char *argument )
     }
 
 	if (strcmp(imm_who_msg, "remove")) {
-		add_buf(output, "{D-{B================================ ANNOUNCEMENT ===================================={D-{x");
-		add_buf(output, imm_who_msg);
+		add_buf(output, "{D-{B============================= ANNOUNCEMENT ================================={D-{x\n\r");
+		add_buf(output, center_text(imm_who_msg, 78));
+		add_buf(output, "\n\r");
 	} 
 
-	add_buf(output, "{D:{B----------------------------------------------------------------------------------{D:{X\n\r");
+	add_buf(output, "{D:{B----------------------------------------------------------------------------{D:{X\n\r");
 	
     sprintf(buf, "Players found: %d\n\r", nMatch);
 	add_buf(output, buf);
@@ -3294,6 +3295,30 @@ void do_who( CHAR_DATA *ch, char *argument )
 
     free_buf( output );
     return;
+}
+
+char *center_text(char *txtstr, int txtnum)
+{
+	int xsize, xcnt, osize, txtsize;
+	static char retbuf[MAX_STRING_LENGTH];
+	char tmpbuf[MAX_STRING_LENGTH], *cptr;
+	osize = strlen(txtstr);
+	txtsize = txtnum;
+	for (cptr = txtstr; *cptr != '\0'; cptr++)
+	{
+		if (*cptr == '`')
+		{
+			txtsize += 2;
+			cptr++;
+		}
+	}
+	xsize = txtsize - osize;
+	xsize /= 2;
+	sprintf(tmpbuf, "%%%ds%%s", xsize);
+	sprintf(retbuf, tmpbuf, "", txtstr);
+	for (xcnt = (xsize + osize); xcnt < txtsize; xcnt++)
+		strcat(retbuf, " ");
+	return (retbuf);
 }
 
 void do_count ( CHAR_DATA *ch, char *argument )
