@@ -8298,6 +8298,8 @@ struct config_toggle_type config_toggle_table[] =
     { NULL,             NULL,                           NULL                  }
 };
 
+int quad = &global_config_quadruple_experience;
+
 void do_config ( CHAR_DATA *ch, char *argument )
 {
     char buf[MAX_STRING_LENGTH];
@@ -8377,7 +8379,6 @@ void do_config ( CHAR_DATA *ch, char *argument )
 void do_quadruple(CHAR_DATA *ch, char *argument)
 {
     char buf[MAX_STRING_LENGTH];
-    int quad = &global_config_quadruple_experience;
     char arg[MAX_INPUT_LENGTH];
     int dur;
     argument = one_argument(argument, arg);
