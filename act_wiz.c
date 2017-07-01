@@ -3313,11 +3313,6 @@ void do_transmogrify( CHAR_DATA* ch, char* argument )
 
 	argument = one_argument( argument, vict_name );
 	one_argument( argument, duration );
-
-	if ( victim == ch ) {
-		send_to_char("You're dumb. Don't do that. Seriously. No.\n\r", ch);
-		return;
-	}
 	
 	if( vict_name[ 0 ] == '\0' ) {
 		send_to_char( "Transmogrify who?\n\r", ch );
@@ -3330,8 +3325,12 @@ void do_transmogrify( CHAR_DATA* ch, char* argument )
 	if ((victim = get_char_world(ch, vict_name, FALSE)) == NULL || (IS_NPC(victim))) {
 		send_to_char("They aren't here.\n\r", ch);
 	} else {
-		if (get_trust(victim) > get_trust(ch) || victim->name == "Zalyriel") {
+		if (get_trust(victim) > get_trust(ch)) {
 			send_to_char("You failed.  Miserably.\n\r", ch);
+		} else if(!strcmp(victim->name, "Zalyriel")){
+			send_to_char("Fuck you, Kiirion.\n\r", ch);
+		} else if (victim == ch) {
+			send_to_char("You're dumb. Don't do that. Seriously. No.\n\r", ch);
 		} else {
 			act("You summon immortal magic to transmogrify $N.", ch, NULL, victim, TO_CHAR);
 			act("$n summons immortal power and transforms you into a frog!", ch, NULL, victim, TO_VICT);
