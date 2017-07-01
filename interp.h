@@ -510,3 +510,4 @@ DECLARE_DO_FUN( do_leavebrawle  );
 DECLARE_DO_FUN( do_leavebrawler );
 DECLARE_DO_FUN( do_clobber      );
 DECLARE_DO_FUN(do_quadruple);
+DECLARE_DO_FUN(do_announcement);

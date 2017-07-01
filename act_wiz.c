@@ -8396,18 +8396,30 @@ void do_quadruple(CHAR_DATA *ch, char *argument)
 						d->character);
 				}
 			}
-		}
-		else {
+		} else {
 			sprintf(buf, "There are %d ticks of quad remaining.\n\r", quad);
 			send_to_char(buf, ch);
 		}
-	}
-	else {
+	} else {
 		send_to_char("Huh?\n\r", ch);
 	}
-    
 
     return;
+}
+
+void do_announcement(CHAR_DATA *ch, char *argument)
+{
+	extern char global_who_announcement;
+
+	if (IS_IMMORTAL(ch)) {
+		if (!IS_NULLSTR(argument)) {
+			global_who_announcement = argument;
+		} else {
+			global_who_announcement = NULL;
+		}
+	} else {
+		send_to_char("Huh?\n\r", ch);
+	}
 }
 
 /* =0, name is fine; =1, is invalid name; =2, name already exists */

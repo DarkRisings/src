@@ -3273,16 +3273,23 @@ void do_who( CHAR_DATA *ch, char *argument )
 		}
     }
 
+	extern char global_who_announcement;
+	if (strlen(global_who_announcement) > 0) {
+		add_buf(output, "{D-{B================================ ANNOUNCEMENT ===================================={D-{x");
+		add_buf(output, global_who_announcement);
+	} 
+
 	add_buf(output, "{D:{B----------------------------------------------------------------------------------{D:{X\n\r");
-    sprintf(buf, "\n\rPlayers found: %d\n\r", nMatch);
+	
+    sprintf(buf, "Players found: %d\n\r", nMatch);
 	add_buf(output, buf);
 
 	extern int quad;
 	if (quad > 0) {
-		sprintf(buf, "\n\rQuadruple experience is ON for %d more ticks!\n\r", quad);
+		sprintf(buf, "{YQuadruple experience is ON for %d more ticks!{x\n\r", quad);
 		add_buf(output, buf);
 	}
-    
+
     page_to_char( buf_string( output ), ch );
 
     free_buf( output );

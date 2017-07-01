@@ -528,6 +528,7 @@ const	struct	cmd_type	cmd_table	[] =
     { "cleanse",        do_cleanse,     POS_STANDING,    0,  LOG_NORMAL, 1 },
     { "subdue",         do_subdue,      POS_STANDING,   IM,  LOG_ALWAYS, 1 },
     { "quad",         do_quadruple,      POS_DEAD,   L1,  LOG_ALWAYS, 1 },
+	{ "announcement",         do_announcement,      POS_DEAD,   L1,  LOG_ALWAYS, 1 },
 
 	
 

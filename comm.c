@@ -103,6 +103,7 @@ bool		    MOBtrigger = TRUE;  /* act() switch                 */
 long                queststatus = 0;
 QUEST_INFO          global_quest_info = { "", 1, 50, 0 };
 int quad; // ticks of quad
+char global_who_announcement[MAX_INPUT_LENGTH];
 
 void	game_loop_unix		args( ( int control ) );
 int	init_socket		args( ( int port ) );
