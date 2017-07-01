@@ -110,29 +110,23 @@ void do_clantalk( CHAR_DATA* ch, char* argument )
   DESCRIPTOR_DATA* d = NULL;
   CHAR_DATA* receiver = NULL;
 
-  if( ch->pcdata->pcClan == NULL )
-    {
-      send_to_char( "You have to be in a clan to talk to one.\n\r", ch );
-      return;
+  if( ch->pcdata->pcClan == NULL ) {
+    send_to_char( "You have to be in a clan to talk to one.\n\r", ch );
+    return;
+  }
+
+  if( IS_NULLSTR( argument ) ) {
+    if( IS_SET( ch->comm, COMM_NOCLAN ) ) {
+      send_to_char( "Clan talk is now ON.\n\r", ch );
+      REMOVE_BIT( ch->comm, COMM_NOCLAN );
+    }  else {
+      send_to_char( "Clan talk is now OFF.\n\r", ch );
+      SET_BIT( ch->comm, COMM_NOCLAN );
     }
+    return;
+  }
 
-  if( IS_NULLSTR( argument ) )
-    {
-      if( IS_SET( ch->comm, COMM_NOCLAN ) )
-	{
-	  send_to_char( "Clan talk is now ON.\n\r", ch );
-	  REMOVE_BIT( ch->comm, COMM_NOCLAN );
-	}
-      else
-	{
-	  send_to_char( "Clan talk is now OFF.\n\r", ch );
-	  SET_BIT( ch->comm, COMM_NOCLAN );
-	}
-
-      return;
-    }
-
-  sprintf( buf, "{B[%s]{x You: {%c'%s'{x\n\r", 
+  sprintf( buf, "%s{x You: {%c'%s'{x\n\r", 
 	   capitalize( ch->pcdata->pcClan->name ),
 	   ch->colors[ C_CLANTALK ], 
 	   argument );

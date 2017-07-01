@@ -8374,6 +8374,25 @@ void do_config ( CHAR_DATA *ch, char *argument )
     return;
 }
 
+void do_quadruple(CHAR_DATA *ch, char *argument)
+{
+    char buf[MAX_STRING_LENGTH];
+    int quad = &global_config_quadruple_experience;
+    char arg[MAX_INPUT_LENGTH];
+    int dur;
+    argument = one_argument(argument, arg);
+
+    if (!IS_NULLSTR(arg)) {
+        dur = atoi(arg)
+        *quad = dur;
+    } else {
+        sprintf(buf, "Quad: %d\n\r", quad);
+        send_to_char(buf, ch);
+    }
+
+    return;
+}
+
 /* =0, name is fine; =1, is invalid name; =2, name already exists */
 int bad_newname( char *name )
 {
