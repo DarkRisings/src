@@ -8380,16 +8380,32 @@ void do_quadruple(CHAR_DATA *ch, char *argument)
 	extern int quad;
     char buf[MAX_STRING_LENGTH];
     char arg[MAX_INPUT_LENGTH];
+	DESCRIPTOR_DATA *d;
     int dur;
+
     argument = one_argument(argument, arg);
 
-    if (!IS_NULLSTR(arg)) {
-		dur = atoi(arg);
-		quad = dur;
-    } else {
-        sprintf(buf, "Quad: %d\n\r", quad);
-        send_to_char(buf, ch);
-    }
+	if (IS_IMMORTAL(ch)) {
+		if (!IS_NULLSTR(arg)) {
+			dur = atoi(arg);
+			quad = dur;
+
+			for (d = descriptor_list; d != NULL; d = d->next) {
+				if (d->connected == CON_PLAYING) {
+					send_to_char("{YThe blessings of the gods shower down upon you. You gain more experience in  your adventures.{x", 
+						d->character);
+				}
+			}
+		}
+		else {
+			sprintf(buf, "There are %d ticks of quad remaining.\n\r", quad);
+			send_to_char(buf, ch);
+		}
+	}
+	else {
+		send_to_char("Huh?\n\r", ch);
+	}
+    
 
     return;
 }
