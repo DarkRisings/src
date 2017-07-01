@@ -8392,7 +8392,7 @@ void do_quadruple(CHAR_DATA *ch, char *argument)
 
 			for (d = descriptor_list; d != NULL; d = d->next) {
 				if (d->connected == CON_PLAYING) {
-					send_to_char("{YThe blessings of the gods shower down upon you. You gain more experience in  your adventures.{x", 
+					send_to_char("{YThe blessings of the gods shower down upon you. You gain more experience in your adventures.{x\n\r", 
 						d->character);
 				}
 			}

@@ -3275,7 +3275,14 @@ void do_who( CHAR_DATA *ch, char *argument )
 
 	add_buf(output, "{D:{B----------------------------------------------------------------------------------{D:{X\n\r");
     sprintf(buf, "\n\rPlayers found: %d\n\r", nMatch);
-    add_buf( output, buf );
+	add_buf(output, buf);
+
+	extern int quad;
+	if (quad > 0) {
+		sprintf(buf, "\n\rQuadruple experience is ON for %d more ticks!\n\r", quad);
+		add_buf(output, buf);
+	}
+    
     page_to_char( buf_string( output ), ch );
 
     free_buf( output );
