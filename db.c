@@ -82,7 +82,6 @@ extern  INT_LIST        *int_list_free;
 
 /* Global configuration variables */
 int                 global_config_aprilfools  = FALSE;
-int                 global_config_quadruple_experience  = 0;
 int                 global_config_lookspam    = FALSE;
 int                 global_config_vorpalon    = TRUE;
 int                 global_config_tick_jitter = 5;
