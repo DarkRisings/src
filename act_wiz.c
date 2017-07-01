@@ -73,6 +73,7 @@ extern char* 	vuln_bit_name	 ( int res_flags );
 extern char* 	room_bit_name	 ( int room_flags );
 extern char*	trans_bit_name	 ( int trans_flags );
 extern bool     check_parse_name ( char *name );
+extern char imm_who_msg[];
 
 //int 		make_tars 	args( (CHAR_DATA* ch ) );
 //void 		purge_pfiles 	args( (CHAR_DATA *ch) );
@@ -8409,17 +8410,25 @@ void do_quadruple(CHAR_DATA *ch, char *argument)
 
 void do_announcement(CHAR_DATA *ch, char *argument)
 {
-	extern char global_who_announcement;
-
-	if (IS_IMMORTAL(ch)) {
-		if (!IS_NULLSTR(argument)) {
-			global_who_announcement = argument;
+	if (strlen(argument) > 0)
+	{
+		if (!strcmp(argument, "remove")) {
+			strcpy(imm_who_msg, "remove");
+			send_to_char("The announcement has been removed.\r\n", ch);
 		} else {
-			global_who_announcement = NULL;
+			if (strlen(argument) > MAX_STRING_LENGTH - 8) {
+				strncpy(imm_who_msg, argument, MAX_STRING_LENGTH - 8);	
+			} else {
+				strcpy(imm_who_msg, argument);
+			}
+
+			send_to_char("The annoucnement has been updated.\r\n", ch);
 		}
 	} else {
-		send_to_char("Huh?\n\r", ch);
+		send_to_char("Set annoucnement to what? (announcment remove to remove it)\r\n", ch);
 	}
+
+	return;
 }
 
 /* =0, name is fine; =1, is invalid name; =2, name already exists */

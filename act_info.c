@@ -60,6 +60,7 @@ DECLARE_DO_FUN( do_mpstat       );
 void look_sky args(( CHAR_DATA *ch ));
 
 extern void do_bloodpool( CHAR_DATA* ch, char* argument );
+char imm_who_msg[MAX_STRING_LENGTH] = "remove";
 
 const char default_prompt[] = 
   "({B%h{x/{B%H{xhp {m%m{x/{m%M{xmn {g%v{xmv) (%X TNL) (%e)%c";
@@ -3273,10 +3274,9 @@ void do_who( CHAR_DATA *ch, char *argument )
 		}
     }
 
-	extern char global_who_announcement;
-	if (strlen(global_who_announcement) > 0) {
+	if (strcmp(imm_who_msg, "remove")) {
 		add_buf(output, "{D-{B================================ ANNOUNCEMENT ===================================={D-{x");
-		add_buf(output, global_who_announcement);
+		add_buf(output, imm_who_msg);
 	} 
 
 	add_buf(output, "{D:{B----------------------------------------------------------------------------------{D:{X\n\r");
