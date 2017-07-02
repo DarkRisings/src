@@ -42,6 +42,7 @@
 extern MPDELAY_DATA      *new_mpdelay  args( (void) );
 extern void               free_mpdelay args( (MPDELAY_DATA *mpdelay) );
 extern  int     max_on;
+extern int quad;
 
 /*
  * Local functions.
@@ -67,6 +68,28 @@ int     save_number = 0;
 
 /* number of ticks for autosave */
 const static int SAVE_INTERVAL = 7;
+
+void quad_update()
+{
+	char buf[MAX_STRING_LENGTH];
+	DESCRIPTOR_DATA *d, *d_next;
+
+
+		if (quad > 0) {
+			quad -= 1;
+		} else if(quad == 0) {
+			for (d = descriptor_list; d != NULL; d = d_next) {
+				d_next = d->next;
+				if (d->connected == CON_PLAYING) {
+					sprintf(buf, "{YYour experience gain normalizes.{x\n\r");
+					send_to_char(buf, d->character);
+				}
+			}
+			quad = -1;
+		}
+	
+	return;
+}
 
 /*
  * Advancement stuff.
@@ -2526,6 +2549,7 @@ void update_handler( void )
         time_update     ( );
         char_update	( );
         obj_update	( );
+		quad_update( );
     }
 
     if ( --pulse_weather  <= 0 )
