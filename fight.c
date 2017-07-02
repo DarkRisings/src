@@ -38,6 +38,7 @@
 #include "lookup.h"
 #include "recycle.h"
 
+extern int quad;
 extern long queststatus;
 extern void spell_wyrm_venom args( ( int sn, int level, CHAR_DATA *ch, 
         void *vo, int target) );
@@ -3193,38 +3194,25 @@ void group_gain( CHAR_DATA *ch, CHAR_DATA *victim )
 
     lch = (ch->leader != NULL) ? ch->leader : ch;
 
-    for ( gch = ch->in_room->people; gch != NULL; gch = gch->next_in_room )
-    {
-	if ( !is_same_group( gch, ch ) || IS_NPC(gch))
-	    continue;
+    for ( gch = ch->in_room->people; gch != NULL; gch = gch->next_in_room ) {
+		if ( !is_same_group( gch, ch ) || IS_NPC(gch)) continue;
 
-/*	Taken out, add it back if you want it
-	if ( gch->level - lch->level >= 5 )
-	{
-	    send_to_char( "You are too high for this group.\n\r", gch );
-	    continue;
-	}
+		xp = xp_compute( gch, victim->level, group_levels, members );  
 
-	if ( gch->level - lch->level <= -5 )
-	{
-	    send_to_char( "You are too low for this group.\n\r", gch );
-	    continue;
-	}
-*/
+		if( !IS_NPC( gch ) && IS_SET( gch->act_bits, PLR_SUSPEND_LEVEL ) ) {
+			send_to_char( "You have suspended your levelling.\n\r", gch );
+		} else {
+			if (quad >= 0) {
+				sprintf(buf, "{YYou receive %d experience points.{x\n\r", xp);
+				xp = xp * 4;
+			} else {
+				sprintf(buf, "You receive %d experience points.\n\r", xp);
+			}
 
-	xp = xp_compute( gch, victim->level, group_levels, members );  
-
-	if( !IS_NPC( gch ) && IS_SET( gch->act_bits, PLR_SUSPEND_LEVEL ) )
-	  {
-	    send_to_char( "You have suspended your levelling.\n\r", gch );
-	  }
-	else
-	  {
-	    sprintf( buf, "You receive %d experience points.\n\r", xp );
-	    send_to_char( buf, gch );
-            
-	    gain_exp( gch, xp );
-	  }
+			send_to_char(buf, gch);
+			gain_exp(gch, xp);
+			
+		}
 
     }
 
