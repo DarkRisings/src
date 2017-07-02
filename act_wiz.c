@@ -8386,12 +8386,19 @@ void do_quadruple(CHAR_DATA *ch, char *argument)
 
 			for (d = descriptor_list; d != NULL; d = d->next) {
 				if (d->connected == CON_PLAYING) {
-					send_to_char("{YThe blessings of the gods shower down upon you. You gain more experience in your adventures.{x\n\r", 
-						d->character);
+					if (dur > 0) {
+						send_to_char("{YThe blessings of the gods shower down upon you. You gain more experience in your adventures.{x\n\r",
+							d->character);
+					} else {
+						send_to_char("{YYour experience gain normalizes{x\n\r",
+							d->character);
+						quad = -1;
+					}
+					
 				}
 			}
 		} else {
-			sprintf(buf, "There are %d ticks of quad remaining.\n\r", quad);
+			sprintf(buf, "Syntax: quad <# ticks> (0 to cancel).\n\r", quad);
 			send_to_char(buf, ch);
 		}
 	} else {

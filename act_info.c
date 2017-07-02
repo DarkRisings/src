@@ -3310,7 +3310,7 @@ void do_who( CHAR_DATA *ch, char *argument )
 	add_buf(output, buf);
 
 	extern int quad;
-	if (quad > 0) {
+	if (quad >= 0) {
 		sprintf(buf, "{YQuadruple experience is ON for %d more ticks!{x\n\r", quad);
 		add_buf(output, buf);
 	}
