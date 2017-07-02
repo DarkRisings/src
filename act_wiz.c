@@ -8394,12 +8394,10 @@ void do_quadruple(CHAR_DATA *ch, char *argument)
 							d->character);
 						quad = -1;
 					}
-					
 				}
 			}
 		} else {
-			sprintf(buf, "Syntax: quad <# ticks> (0 to cancel).\n\r", quad);
-			send_to_char(buf, ch);
+			send_to_char("Syntax: quad <# ticks> (0 to cancel).\n\r", ch);
 		}
 	} else {
 		send_to_char("Huh?\n\r", ch);
