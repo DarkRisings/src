@@ -8372,7 +8372,6 @@ void do_config ( CHAR_DATA *ch, char *argument )
 void do_quadruple(CHAR_DATA *ch, char *argument)
 {
 	extern int quad;
-    char buf[MAX_STRING_LENGTH];
     char arg[MAX_INPUT_LENGTH];
 	DESCRIPTOR_DATA *d;
     int dur;
