@@ -3203,15 +3203,14 @@ void group_gain( CHAR_DATA *ch, CHAR_DATA *victim )
 			send_to_char( "You have suspended your levelling.\n\r", gch );
 		} else {
 			if (quad >= 0) {
-				sprintf(buf, "{YYou receive %d experience points.{x\n\r", xp);
 				xp = xp * 4;
+				sprintf(buf, "{YYou receive %d experience points.{x\n\r", xp);
 			} else {
 				sprintf(buf, "You receive %d experience points.\n\r", xp);
 			}
 
 			send_to_char(buf, gch);
 			gain_exp(gch, xp);
-			
 		}
 
     }
