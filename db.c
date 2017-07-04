@@ -47,6 +47,7 @@
 #include "interp.h"
 #include "brawler.h"
 #include "clans.h"
+#include "guilds.h"
 
 #define OLD_RAND
 
@@ -693,6 +694,7 @@ void boot_db( void )
         load_bankaccts();
         load_brawler();
 	loadClans();
+	load_new_guilds();
     }
 
 

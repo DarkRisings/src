@@ -35,9 +35,11 @@
 #include <string.h>
 #include "merc.h"
 #include "tables.h"
-
+#include "guilds.h"
 /* since this looks up based on area vnums, it can be used to find the */
 /* highest theoretical vnum for rooms, mobs, and objs */
+
+extern struct pc_guild_type pc_guild_table[MAX_PC_GUILD];
 
 int max_vnum_lookup( void )
 {
@@ -73,8 +75,8 @@ int guild_lookup(const char *name)
 
     for (iGuild = 0; iGuild < MAX_GUILD; iGuild++)
     {
-	if (LOWER(name[0]) == LOWER(guild_table[iGuild].name[0])
-	&&  !str_prefix(name,guild_table[iGuild].name))
+	if (LOWER(name[0]) == LOWER(pc_guild_table[iGuild].name[0])
+	&&  !str_prefix(name, pc_guild_table[iGuild].name))
 	    return iGuild;
     }
 

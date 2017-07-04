@@ -46,6 +46,7 @@
 #include "lookup.h"
 #include "olc.h"
 #include "clans.h"
+#include "guilds.h"
 
 /* command procedures needed */
 DECLARE_DO_FUN(	do_exits	);
@@ -61,6 +62,7 @@ void look_sky args(( CHAR_DATA *ch ));
 
 extern void do_bloodpool( CHAR_DATA* ch, char* argument );
 char imm_who_msg[MAX_STRING_LENGTH] = "remove";
+extern struct pc_guild_type pc_guild_table[MAX_PC_GUILD];
 
 const char default_prompt[] = 
   "({B%h{x/{B%H{xhp {m%m{x/{m%M{xmn {g%v{xmv) (%X TNL) (%e)%c";
@@ -3043,12 +3045,12 @@ char* whoLine( CHAR_DATA* ch, CHAR_DATA* looker )
         showBrawler = TRUE;
     }
 
-    snprintf(chLineItem, MAX_INPUT_LENGTH, "%s %s%s%s%s%s%s%s%s%s%s%s%s%s%s\n\r",
+    snprintf(chLineItem, MAX_INPUT_LENGTH, "%s %s%s%s%s%s%s%s%s%s%s%s%s%s\n\r",
         chPretitle,
         chIncog,
         chWizi,
         IS_AFFECTED3(ch, AFF_VEIL) ? VEILED : "",
-        guild_table[ch->guild].who_name,
+        pc_guild_table[ch->guild].symbol,
         IS_SET(ch->act_bits, PLR_QUEST) ? QUEST : "",
         IS_SET(ch->comm, COMM_AFK) ? AFK : "",
         IS_AFFECTED2(ch, AFF_WANTED) ? WANTED : "",
@@ -3056,7 +3058,6 @@ char* whoLine( CHAR_DATA* ch, CHAR_DATA* looker )
         IS_SET(ch->act_bits, ACT_NOAPPROVE) ? UNAPPROVED : "",
         IS_SET(ch->act_bits, PLR_NEWBIE) ? NEWBIE : "",
         showBrawler ? BRAWLER : "",
-        chClan,
         ch->name,
         IS_NPC(ch) ? "" : ch->pcdata->title
     );

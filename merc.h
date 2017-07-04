@@ -132,6 +132,19 @@ typedef bool SPEC_FUN	args( ( CHAR_DATA *ch ) );
 typedef void SPELL_FUN	args( ( int sn, int level, CHAR_DATA *ch, void *vo,\
 				int target ) );
 
+// New guild stuff
+#define MAX_GNAME  36
+#define MAX_GSYMB  36
+#define GUILDS_START 1
+#define GUILD_BOGUS 0
+#define GUILD_DIR "../guilds"
+#define GUILDINDEX "guildindex"
+#define MAX_PC_GUILD 20
+#define GUILD_BOGUS_NAME    "ClanBogus"
+#define GUILD_BOGUS_SYMB    "`f<`cBOGUS`f>``"
+#define GUILD_RES_IDENT_MIN 1
+#define GUILD_LEADER 100
+
 /*
  * Some interesting constants for PK
  * 8/26/06 values altered for experimental testing

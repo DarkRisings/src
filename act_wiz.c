@@ -48,6 +48,7 @@
 #include "olc.h"
 #include "brawler.h"
 #include "clans.h"
+#include "guilds.h"
 #include "interp.h"
 
 /* command procedures needed */
@@ -485,39 +486,7 @@ void do_guild( CHAR_DATA *ch, char *argument )
   victim->pcdata->guild_date = current_time;
 }
 
-void do_rank( CHAR_DATA *ch, char *argument )
-{
-    char arg1[MAX_INPUT_LENGTH],arg2[MAX_STRING_LENGTH];
-    char buf[MAX_STRING_LENGTH];
-    CHAR_DATA *victim;
 
-    argument = one_argument( argument, arg1 );
-    strcpy( arg2, argument );
-
-    if ( arg1[0] == '\0' || arg2[0] == '\0' )
-    {
-        send_to_char( "Syntax: rank <char> <rank>\n\r",ch);
-        return;
-    }
-
-    if ( ( victim = get_char_world( ch, arg1, TRUE) ) == NULL )
-    {
-        send_to_char( "They aren't playing.\n\r", ch );
-        return;
-    }
-
-    free_string( victim->title_guild );
-    smash_tilde( arg2 );
-    sprintf(buf,"%s",arg2);
-    victim->title_guild = str_dup( buf );
-    
-    sprintf(buf,"They have achieved %s status within the guild.\n\r", arg2);
-    send_to_char(buf,ch);
-    sprintf(buf,"You have achieved %s status within the guild.\n\r", arg2);
-    send_to_char(buf, victim);
-
- 
-}
 
 /* equips a character */
 void do_outfit ( CHAR_DATA *ch, char *argument )

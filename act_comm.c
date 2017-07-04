@@ -40,6 +40,7 @@
 #include "tables.h"
 #include "interp.h"
 #include "lookup.h"
+#include "guilds.h"
 
 /* Minimum length of a message for it to "count" 
    as a gdt, ic, ooc, etc */
@@ -47,6 +48,7 @@
 
 extern long queststatus;
 extern QUEST_INFO global_quest_info;
+extern struct pc_guild_type pc_guild_table[MAX_PC_GUILD];
 
 const struct quest_cmd quest_cmd_tbl[] =
   {
@@ -755,7 +757,7 @@ void do_guildtalk( CHAR_DATA *ch, char *argument )
   char buf[MAX_STRING_LENGTH];
   DESCRIPTOR_DATA *d;
 
-  if (!is_guild(ch)/* || guild_table[ch->guild].independent*/)
+  if (!is_guild(ch))
     {
       send_to_char("You aren't in a guild.\n\r",ch);
       return;
@@ -782,16 +784,11 @@ void do_guildtalk( CHAR_DATA *ch, char *argument )
       return;
     }
 
-  /* if (IS_SET(ch->comm,COMM_NOCHANNELS))
-     {
-     send_to_char("The gods have revoked your channel priviliges.\n\r",ch);
-     return;
-     }*/
 
   REMOVE_BIT(ch->comm,COMM_NOGUILD);
 
   sprintf( buf, "%s%s %s: {%c'%s'{x\n\r", 
-	   guild_table[ch->guild].who_name,
+	   pc_guild_table[ch->guild].symbol,
 	   ch->title_guild,
 	   ch->name,ch->colors[C_GDT],argument );
   send_to_char( buf, ch );
@@ -804,7 +801,7 @@ void do_guildtalk( CHAR_DATA *ch, char *argument )
 	   !IS_SET(d->character->comm,COMM_QUIET) )
         {
 	  sprintf( buf, "%s%s %s: {%c'%s'{x\n\r",
-		   guild_table[ ch->guild ].who_name,ch->title_guild,( IS_NPC( ch ) ? 
+		  pc_guild_table[ ch->guild ].symbol,ch->title_guild,( IS_NPC( ch ) ?
 								     capitalize( PERS2( ch, d->character ) ) : 
 								     ch->name ),d->character->colors[ C_GDT ],argument );
 	  send_to_char( buf, d->character );

@@ -77,10 +77,10 @@ struct	bit_type
 extern  const   struct  flag_type       quest_flags[];
 extern  const   struct  flag_type       quest_flags_verbose[];
 extern  const   struct  flag_type       limit_flags[];
-extern		struct	guild_type	guild_table[MAX_GUILD];
+extern			struct	guild_type		guild_table[MAX_GUILD];
 extern	const	struct	position_type	position_table[];
-extern	const	struct	sex_type	sex_table[];
-extern	const	struct	size_type	size_table[];
+extern	const	struct	sex_type		sex_table[];
+extern	const	struct	size_type		size_table[];
 
 /* 
  * flag tables 

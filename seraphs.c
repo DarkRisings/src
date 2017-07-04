@@ -155,35 +155,34 @@ void do_lifeenergy(CHAR_DATA *ch)
 	return;
 }
 
-void do_makeseraph(CHAR_DATA *ch, char *argument ){
+void do_makeseraph(CHAR_DATA *ch, char *argument )
+{
 
 	CHAR_DATA *victim;
 	int i;
 	int race;
-    	int old_race;
-	old_race = victim->race;
-    	race = race_lookup("seraph");
+    int old_race;
 	char arg[MAX_INPUT_LENGTH];
 	one_argument( argument, arg );
 	 
 	 
-		if ( arg[0] == '\0' )
-		{
-			send_to_char( "Who would you like to make a Seraph?\n\r", ch );
-			return;
-		}
+	if ( arg[0] == '\0' ) {
+		send_to_char( "Who would you like to make a Seraph?\n\r", ch );
+		return;
+	}
 		
-		if ( ( victim = get_char_world( ch, arg, FALSE ) ) == NULL )
-		{
-			send_to_char( "They aren't here.\n\r", ch );
-			return;
-		}
+	if ( ( victim = get_char_world( ch, arg, FALSE ) ) == NULL ) {
+		send_to_char( "They aren't here.\n\r", ch );
+		return;
+	}
 		
-		if ( IS_NPC(victim) )
-		{
+	if ( IS_NPC(victim) ) {
 		send_to_char( "Not on NPC's.\n\r", ch );
 		return;
-		}
+	}
+
+	old_race = victim->race;
+	race = race_lookup("seraph");
  
 	// Set to level 1, reset hp/ma/mv
 	victim->level = 1;

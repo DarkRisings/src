@@ -40,7 +40,7 @@
 #include "lookup.h"
 #include "brawler.h"
 #include "clans.h"
- 
+#include "guilds.h" 
 #if !defined(macintosh)
 extern  int     _filbuf         args( (FILE *) );
 #endif
@@ -48,6 +48,8 @@ extern  int     _filbuf         args( (FILE *) );
 
 int rename(const char *oldfname, const char *newfname);
 extern MPRECOG_DATA *new_mprecog(void);
+extern struct pc_guild_type pc_guild_table[MAX_PC_GUILD];
+
 char *print_flags(int flag)
 {
     int count, pos = 0;
@@ -172,7 +174,7 @@ void fwrite_char( CHAR_DATA *ch, FILE *fp )
   fprintf( fp, "Race %s~\n", pc_race_table[ch->race].name );
   
   if (ch->guild)
-    fprintf( fp, "Guild %s~\n",guild_table[ch->guild].name);
+    fprintf( fp, "Guild %s~\n",pc_guild_table[ch->guild].name);
     
   if (ch->image[0] != '\0')
     fprintf( fp, "Image %s~\n",	ch->image	);
@@ -1495,14 +1497,14 @@ void fread_char( CHAR_DATA *ch, FILE *fp )
 
 	case 'G':
             KEY( "God", ch->pcdata->god,                fread_number(fp));
-	    KEY( "Gold",	ch->gold,		fread_number( fp ) );
+			KEY( "Gold",	ch->gold,		fread_number( fp ) );
             KEY( "Gold_bank", ch->pcdata->gold_bank,  fread_number(fp));
-	    KEY( "Guild", ch->guild, guild_lookup( fread_string( fp ) ) );
+			KEY( "Guild", ch->guild, guild_lookup( fread_string( fp ) ));
             KEY( "Guildtitl", ch->title_guild,        fread_string(fp));
-	    KEY( "GuildTime", ch->pcdata->guild_time, fread_number(fp));
-	    KEY( "GuildLogs", ch->pcdata->guild_logs, fread_number(fp));
-	    KEY( "GuildDate", ch->pcdata->guild_date, fread_number(fp));
-		KEY( "Gossip",	ch->pcdata->last_gossip,	fread_number( fp ) );
+			KEY( "GuildTime", ch->pcdata->guild_time, fread_number(fp));
+			KEY( "GuildLogs", ch->pcdata->guild_logs, fread_number(fp));
+			KEY( "GuildDate", ch->pcdata->guild_date, fread_number(fp));
+			KEY( "Gossip",	ch->pcdata->last_gossip,	fread_number( fp ) );
             if ( !str_cmp( word, "Group" )  || !str_cmp(word,"Gr"))
             {
                 int gn;
@@ -1820,6 +1822,13 @@ void fread_char( CHAR_DATA *ch, FILE *fp )
     	    sprintf(buf2,"Fread_char: %s no match.", word );
 	    bug(buf2,0);
 	    fread_to_eol( fp );
+	} else {
+		// So leaders can kick people out without them being
+		// present, and also pretty much clears all current guild
+		// relations so we can start over.
+		if (!is_in_guild(ch->guild, ch->name)) {
+			ch->guild = GUILD_BOGUS;
+		}
 	}
     }
 }

@@ -49,7 +49,7 @@ void do_pmusic(CHAR_DATA *ch, char *argument)
         if (IS_NPC(ch) || !IS_SET(ch->act_bits,PLR_PUEBLO)) {
         send_to_char("Huh?\n\r",ch);
         }
-        else if (!arg || !*arg) {
+        else if (!*arg) {
 	send_to_char("The following music is available...\n\r",ch);
         for (i = 0; *def_music[i][0] != '\n'; i++) {
 		sprintf(buf,"  %2d. %-25s  {y%s{x\r\n",i,def_music[i][0],

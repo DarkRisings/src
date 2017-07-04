@@ -27,7 +27,7 @@ TAR = tar
 
 OBJS = act_comm.o act_enter.o act_info.o act_move.o act_obj.o act_wiz.o \
 	ban.o clans.o comm.o const.o db.o db2.o effects.o fight.o flags.o \
-	handler.o healer.o interp.o note.o lookup.o magic.o magic2.o \
+	guilds.o handler.o healer.o interp.o note.o lookup.o magic.o magic2.o \
 	music.o recycle.o save.o scan.o skills.o special.o tables.o \
 	update.o mob_cmds.o mob_prog.o olc.o olc_act.o olc_save.o bit.o \
 	mem.o string.o olc_mpcode.o bank.o wild.o were.o vampire.o \

@@ -289,11 +289,11 @@ void journal_index( CHAR_DATA *ch, int page )
                 add_buf(output,buf);
                 if ( complete )
                     sprintf(buf, "     ({DCompleted{x) %s\n\r\n\r",
-                        ( jtag != "" ? jtag : "???" ) );
+                        (str_cmp(jtag, "") ? jtag : "???" ) );
                 else
                     sprintf(buf, "     ({rStep %d{x) %s\n\r\n\r",
                         histep,
-                        ( jtag != "" ? jtag : "???" ) );
+                        (str_cmp(jtag, "") ? jtag : "???" ) );
 
                 add_buf(output,buf);
             }
