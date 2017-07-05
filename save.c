@@ -1468,18 +1468,42 @@ void fread_char( CHAR_DATA *ch, FILE *fp )
 	    {
     		/* adjust hp mana move up  -- here for speed's sake */
     		percent = (current_time - lastlogoff) * 25 / ( 2 * 60 * 60);
-
-		percent = UMIN(percent,100);
+			percent = UMIN(percent,100);
  
-    		if (percent > 0 && !IS_AFFECTED(ch,AFF_POISON)
-    		&&  !IS_AFFECTED(ch,AFF_PLAGUE))
-    		{
+    		if (percent > 0 && !IS_AFFECTED(ch,AFF_POISON) &&  !IS_AFFECTED(ch,AFF_PLAGUE)) {
         	    ch->hit	+= (ch->max_hit - ch->hit) * percent / 100;
         	    ch->mana    += (ch->max_mana - ch->mana) * percent / 100;
         	    ch->move    += (ch->max_move - ch->move)* percent / 100;
     		}
+			
+			
+			/*
+			** Most guild leader functions can be performed without the member
+			** needing to be present. This allows a lot more flexibility to
+			** get stuff done without waiting on schedules and time zones.
+			** It also means that char files need to be updated on load to check
+			** for guild changes.
+			*/
 
-		return;
+			// If the char has a guild but isn't in the guild file, boot 'em
+			if (ch->guild != GUILD_BOGUS && !is_in_guild(ch->guild, ch->name)) {
+				ch->guild = GUILD_BOGUS;
+			}
+
+			// if the char is applying to a guild but isn't an applicant
+			if (!IS_NULLSTR(ch->cln_apply) && !is_applicant(guild_lookup(ch->cln_apply), ch->name)) {
+				// first check if they're a member of it now
+				if (is_in_guild(guild_lookup(ch->cln_apply), ch->name)) {
+					// They got accepted at some point
+					ch->guild = guild_lookup(ch->cln_apply);
+				}
+
+				// Otherwise they were denied, in both cases free this 
+				// string
+				free_string(ch->cln_apply);
+			}
+
+			return;
 	    }
 	    KEY( "Exp",		ch->exp,		fread_number( fp ) );
 	    break;
@@ -1822,15 +1846,7 @@ void fread_char( CHAR_DATA *ch, FILE *fp )
     	    sprintf(buf2,"Fread_char: %s no match.", word );
 	    bug(buf2,0);
 	    fread_to_eol( fp );
-	} else {
-		if (ch->guild != GUILD_BOGUS && !is_in_guild(ch->guild, ch->name)) {
-			ch->guild = GUILD_BOGUS;
-		}
-
-		if (!IS_NULLSTR(ch->cln_apply) && !is_applicant(guild_lookup(ch->cln_apply), ch->name)) {
-			free_string(ch->cln_apply);
-		}
-	}
+	} 
     }
 }
 

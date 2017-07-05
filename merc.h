@@ -3158,6 +3158,7 @@ char    *strsep         args( ( char** str, const char* delims) );
 #endif
 AD  	*affect_find    args( (AFFECT_DATA *paf, int sn));
 char    *strip_color	args( ( const char *str ) );
+char    *strip_whitespace args((const char *str));
 char    *escape_color	args( ( const char *str ) );
 char    *smash_crlf     args( ( const char *str ) );
 void	affect_check	args( (CHAR_DATA *ch, int where, int vector) );

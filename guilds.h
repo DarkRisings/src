@@ -28,6 +28,7 @@ struct pc_guild_member
 	int levels;			
 	char rank[MAX_GNAME + 1];
 	bool isLeader;
+	int glevel;
 };
 
 //
@@ -54,6 +55,7 @@ void do_guild_expel(CHAR_DATA *ch, char *argument);
 void do_guild_defect(CHAR_DATA *ch);
 bool is_applicant(int guild, char *name);
 void do_guild_disband(CHAR_DATA *ch);
+bool can_perform_action(MEMBER *m, char *action);
 
 //
 // External declarations

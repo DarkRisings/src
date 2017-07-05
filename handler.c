@@ -103,6 +103,14 @@ char *strip_color( const char *str )
     return strfix;
 }
 
+char *strip_whitespace(const char *str)
+{
+	int pos = 0;
+	while ((str[pos] != '\0') && isspace((int)str[pos]))
+		pos++;
+	return (&(str[pos]));
+}
+
 /* 
  * Escapes color codes
  */
