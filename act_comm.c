@@ -754,67 +754,70 @@ void do_nb( CHAR_DATA *ch, char *argument )
 /* guild channels*/
 void do_guildtalk( CHAR_DATA *ch, char *argument )
 {
-  char buf[MAX_STRING_LENGTH];
-  DESCRIPTOR_DATA *d;
+	char buf[MAX_STRING_LENGTH];
+	DESCRIPTOR_DATA *d;
+	MEMBER *m;
 
-  if (!is_guild(ch))
-    {
-      send_to_char("You aren't in a guild.\n\r",ch);
-      return;
-    }
-	
-  if ( argument[0] == '\0' )
-    {
-      if (IS_SET(ch->comm,COMM_NOGUILD))
-	{
-	  send_to_char("Guild channel is now ON\n\r",ch);
-	  REMOVE_BIT(ch->comm,COMM_NOGUILD);
+	if (!is_guild(ch))  {
+		send_to_char("You aren't in a guild.\n\r",ch);
+		return;
 	}
-      else
-	{
-	  send_to_char("Guild channel is now OFF\n\r",ch);
-	  SET_BIT(ch->comm,COMM_NOGUILD);
+	
+	if ( argument[0] == '\0' ) {
+		if (IS_SET(ch->comm,COMM_NOGUILD)) {
+			send_to_char("Guild channel is now ON\n\r",ch);
+			REMOVE_BIT(ch->comm,COMM_NOGUILD);
+		} else {
+			send_to_char("Guild channel is now OFF\n\r",ch);
+			SET_BIT(ch->comm,COMM_NOGUILD);
+		}
+
+		return;
 	}
-      return;
-    }
 
-  if( IS_SET( ch->act_bits, ACT_NOAPPROVE ) )
-    {
-      send_to_char( "You must be approved to use this channel.  See 'help approval'.\n\r", ch );
-      return;
-    }
+	if( IS_SET( ch->act_bits, ACT_NOAPPROVE ) ) {
+		send_to_char( "You must be approved to use this channel.  See 'help approval'.\n\r", ch );
+		return;
+	}
 
 
-  REMOVE_BIT(ch->comm,COMM_NOGUILD);
+	REMOVE_BIT(ch->comm,COMM_NOGUILD);
+	m = get_member(ch->guild, ch->name);
 
-  sprintf( buf, "%s%s %s: {%c'%s'{x\n\r", 
-	   pc_guild_table[ch->guild].symbol,
-	   ch->title_guild,
-	   ch->name,ch->colors[C_GDT],argument );
-  send_to_char( buf, ch );
+	sprintf( buf, "%s%s %s: {%c'%s'{x\n\r", 
+		pc_guild_table[ch->guild].symbol,
+		m->gtitle,
+		ch->name,
+		ch->colors[C_GDT],
+		argument 
+	);
+
+	send_to_char( buf, ch );
 	
-  for ( d = descriptor_list; d != NULL; d = d->next )
-    {
-      if ( d->connected == CON_PLAYING && d->character != ch &&
-	   is_same_guild(ch,d->character) && !IS_SET(
-						    d->character->comm,COMM_NOGUILD) &&
-	   !IS_SET(d->character->comm,COMM_QUIET) )
-        {
-	  sprintf( buf, "%s%s %s: {%c'%s'{x\n\r",
-		  pc_guild_table[ ch->guild ].symbol,ch->title_guild,( IS_NPC( ch ) ?
-								     capitalize( PERS2( ch, d->character ) ) : 
-								     ch->name ),d->character->colors[ C_GDT ],argument );
-	  send_to_char( buf, d->character );
-	  /*        act_new(buf,ch,argument,d->character,TO_VICT,POS_DEAD, 0 ); */ 
-        }
-    }
+	for ( d = descriptor_list; d != NULL; d = d->next ) {
+		if ( d->connected == CON_PLAYING 
+			&& d->character != ch 
+			&& is_same_guild(ch,d->character) 
+			&& !IS_SET(d->character->comm,COMM_NOGUILD) 
+			&& !IS_SET(d->character->comm,COMM_QUIET) )  {
 
-  if ( !IS_NPC( ch ) && strlen( argument ) > MIN_CHARACTER_LOGGING )
-    {
-      ch->pcdata->gdts++;
-    }
+			sprintf( buf, "%s%s %s: {%c'%s'{x\n\r",
+				pc_guild_table[ ch->guild ].symbol,ch->title_guild,
+				(IS_NPC( ch ) ? capitalize(PERS2( ch, d->character)) :  ch->name ),
+				d->character->colors[ C_GDT ],
+				argument 
+			);
+
+			send_to_char( buf, d->character );
+
+		}
+	}
+
+	if ( !IS_NPC( ch ) && strlen( argument ) > MIN_CHARACTER_LOGGING ) {
+		ch->pcdata->gdts++;
+	}
 	
-  return;
+	return;
 }
 
 void do_immtalk( CHAR_DATA *ch, char *argument )
