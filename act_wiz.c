@@ -3199,6 +3199,7 @@ void do_reboot( CHAR_DATA *ch, char *argument )
     save_bankaccts();
     save_brawlers();
     saveClans();
+	save_guilds();
     
     return;
 }
@@ -3238,7 +3239,7 @@ void do_shutdown( CHAR_DATA *ch, char *argument )
     save_bankaccts();
     save_brawlers();
     saveClans();
-
+	save_guilds();
     return;
 }
 

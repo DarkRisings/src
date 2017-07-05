@@ -1379,7 +1379,7 @@ void fread_char( CHAR_DATA *ch, FILE *fp )
 			KEY( "ccapply",	ch->cln_apply,	fread_string( fp ) );
 	    KEY( "Class",	ch->class,		fread_number( fp ) );
 	    KEY( "Cla",		ch->class,		fread_number( fp ) );
-	    KEY( "Clan",	ch->guild,	guild_lookup(fread_string(fp))); /* this can be removed if clan/guild is fixed in pfiles*/
+	    KEY( "Clan",	ch->guild,	guild_lookup(fread_string(fp))); 
 	    KEY( "C_OOC",       ch->colors[C_OOC],	fread_letter( fp ) );
 	    KEY( "C_IC",        ch->colors[C_IC],	fread_letter( fp ) );
 	    KEY( "C_GT",        ch->colors[C_GT],	fread_letter( fp ) );
@@ -1823,11 +1823,12 @@ void fread_char( CHAR_DATA *ch, FILE *fp )
 	    bug(buf2,0);
 	    fread_to_eol( fp );
 	} else {
-		// So leaders can kick people out without them being
-		// present, and also pretty much clears all current guild
-		// relations so we can start over.
-		if (!is_in_guild(ch->guild, ch->name)) {
+		if (ch->guild != GUILD_BOGUS && !is_in_guild(ch->guild, ch->name)) {
 			ch->guild = GUILD_BOGUS;
+		}
+
+		if (!IS_NULLSTR(ch->cln_apply) && !is_applicant(guild_lookup(ch->cln_apply), ch->name)) {
+			free_string(ch->cln_apply);
 		}
 	}
     }

@@ -1,7 +1,5 @@
 #include "merc.h"
 
-
-
 typedef struct pc_guild_member MEMBER;
 typedef struct pc_guild_type PCGUILD;
 
@@ -32,6 +30,9 @@ struct pc_guild_member
 	bool isLeader;
 };
 
+//
+// Local functions
+//
 void load_new_guilds(void);
 void load_guild(FILE *fp);
 MEMBER *new_member_elt(void);
@@ -42,4 +43,19 @@ void do_guild_establish(CHAR_DATA* ch, char* name, char* symbol);
 bool is_in_guild(int guild, char *name);
 void save_guild(int guild);
 void save_guilds();
-void load_new_guild(FILE *fp);
+MEMBER *get_member(int guild, char *name);
+void do_guild_apply(CHAR_DATA *ch, char *argument);
+void do_guild_approve(CHAR_DATA *ch, char *argument);
+void do_guild_info(CHAR_DATA *ch);
+void do_guild_accept(CHAR_DATA *ch, char *argument);
+void nullify_applicant(int guild, char *name);
+void nullify_member(int guild, char *name);
+void do_guild_expel(CHAR_DATA *ch, char *argument);
+void do_guild_defect(CHAR_DATA *ch);
+bool is_applicant(int guild, char *name);
+void do_guild_disband(CHAR_DATA *ch);
+
+//
+// External declarations
+//
+char *center_text(char *txtstr, int txtnum);

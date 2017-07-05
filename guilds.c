@@ -12,6 +12,49 @@
 struct pc_guild_type pc_guild_table[MAX_PC_GUILD];
 int guild_number = 0;
 
+void do_new_guild(CHAR_DATA* ch, char* argument)
+{
+	char arg1[MAX_INPUT_LENGTH] = "";
+	char arg2[MAX_INPUT_LENGTH] = "";
+	char arg3[MAX_INPUT_LENGTH] = "";
+	argument = one_argument(argument, arg1);
+	argument = one_argument(argument, arg2);
+	strcpy(arg3, argument);
+
+
+	if (IS_NPC(ch)) {
+		send_to_char("NPCs can't perform clan business.\n\r", ch);
+		return;
+	}
+
+	if (IS_NULLSTR(arg1)) {
+		send_to_char("What guild function would you like to perform?\n\r", ch);
+		return;
+	}
+
+	if (!strcmp(arg1, "list")) {
+		do_guild_list(ch);
+	} else if (!strcmp(arg1, "who")) {
+		do_guild_who(ch, arg2);
+	} else if (!strcmp(arg1, "establish")) {
+		do_guild_establish(ch, arg2, arg3);
+	} else if (!strcmp(arg1, "apply")) {
+		do_guild_apply(ch, arg2);
+	} else if (!strcmp(arg1, "approve")) {
+		do_guild_approve(ch, arg2);
+	} else if (!strcmp(arg1, "info")) {
+		do_guild_info(ch);
+	} else if (!strcmp(arg1, "accept")) {
+		do_guild_accept(ch, arg2);
+	} else if (!strcmp(arg1, "defect")) {
+		do_guild_defect(ch);
+	} else if (!strcmp(arg1, "expel")) {
+		do_guild_expel(ch, arg2);
+	} else if (!strcmp(arg1, "disband")) {
+		do_guild_disband(ch);
+	}
+}
+
 void load_new_guilds()
 {
 	FILE *fp;
@@ -66,10 +109,10 @@ void save_guild(int guild)
 	FILE *fp;
 	MEMBER *m;
 	MEMBER *a;
-	int isLeader = 0;
 	char name[MAX_STRING_LENGTH];
 	char buf[MAX_STRING_LENGTH];
 
+	// reliable and easy way to lowercase a string
 	one_argument(pc_guild_table[guild].name, name);
 	sprintf(buf, "%s/%s.gld", GUILD_DIR, name);
 	fp = fopen(buf, "w");
@@ -84,11 +127,7 @@ void save_guild(int guild)
 		m = pc_guild_table[guild].members;
 		while (m != NULL) {
 			if (m->name[0] != '\0') {
-				if (m->isLeader) {
-					isLeader = 1;
-				}
-
-				fprintf(fp, "Memb %s %d %d %s\n", m->name, m->levels, isLeader, m->rank);
+				fprintf(fp, "Memb %s %d %d %s\n", m->name, m->levels, m->isLeader ? 1 : 0, m->rank);
 			}
 			m = m->next;
 		}
@@ -103,8 +142,7 @@ void save_guild(int guild)
 
 		fprintf(fp, "End ");
 		fclose(fp);
-	}
-	else {
+	} else {
 		log_string("Null file");
 	}
 }
@@ -118,6 +156,7 @@ void load_guild(FILE *fp)
 	int isLeader;
 	bool foundLeader = FALSE;
 	char buf[MAX_INPUT_LENGTH] = "";
+	int levels = 0;
 
 	MEMBER *m = NULL;
 
@@ -132,6 +171,7 @@ void load_guild(FILE *fp)
 				if (guild_number < id) {
 					guild_number = id;
 				}
+				pc_guild_table[id].ident = id;
 				pc_guild_table[id].members = NULL;
 				pc_guild_table[id].applicants = NULL;
 			break;
@@ -145,9 +185,6 @@ void load_guild(FILE *fp)
 				sprintf(buf, "%s ", fread_word(fp));
 				strcpy(pc_guild_table[id].symbol, buf);
 			break;
-			case 'L':
-				pc_guild_table[id].levels = fread_number(fp);
-			break;
 			case 'M':
 				m = new_member_elt();
 				strcpy(m->name, fread_word(fp));
@@ -159,12 +196,12 @@ void load_guild(FILE *fp)
 					foundLeader = TRUE;
 					pc_guild_table[id].leader = m;
 				}
-
-				if (pc_guild_table[id].members == NULL) {
-					pc_guild_table[id].members = m;
-				} else {
-					append_member(pc_guild_table[id].members, m);
-				}
+				sprintf(buf, "%d", levels);
+				log_string(buf);
+				levels = levels + m->levels;
+				sprintf(buf, "%d", levels);
+				log_string(buf);
+				pc_guild_table[id].members = append_member(pc_guild_table[id].members, m);
 			break;
 			case 'A':
 				if (!str_cmp(word, "acti")) {
@@ -182,38 +219,35 @@ void load_guild(FILE *fp)
 					isLeader = fread_number(fp);
 					m->isLeader = FALSE;
 					strcpy(m->rank, fread_word(fp));
-					if (pc_guild_table[id].applicants == NULL) {
-						pc_guild_table[id].applicants = m;
-					}
-					else {
-						append_member(pc_guild_table[id].applicants, m);
-					}
+					pc_guild_table[id].applicants = append_member(pc_guild_table[id].applicants, m);
 				}
 			break;
 			case 'E':
-				if (!foundLeader) {
-					// Someone hosed the leader. This can either mean that
-					// a player was deleted or the clan is disbanded. So
-					// first check if there are any members...
-
-					if (pc_guild_table[id].members != NULL) {
-						// There are members, so first guy is it now. Gratz guy.
-						m = new_member_elt();
-						strcpy(m->name, pc_guild_table[id].members->name);
-						strcpy(m->rank, pc_guild_table[id].members->rank);
-						m->levels = pc_guild_table[id].members->levels;
-						m->isLeader = TRUE;
-						m->next = NULL;
-						pc_guild_table[id].leader = m;
-					} else {
-						// If by this point there are NO members, this guild is disbanded
-						// So just to be save let's set active to 0 to make sure it
-						// won't show up in the guild list
-						pc_guild_table[id].active = FALSE;
-					}
-					
-				}
+				// Finish the routine
 				if (!str_cmp(word, "End")) {
+					if (!foundLeader) {
+						// Someone hosed the leader. This can either mean that
+						// a player was deleted or the clan is disbanded. So
+						// first check if there are any members...
+
+						if (pc_guild_table[id].members != NULL) {
+							// There are members, so first guy is it now. Gratz guy.
+							m = new_member_elt();
+							strcpy(m->name, pc_guild_table[id].members->name);
+							strcpy(m->rank, pc_guild_table[id].members->rank);
+							m->levels = pc_guild_table[id].members->levels;
+							m->isLeader = TRUE;
+							m->next = NULL;
+							pc_guild_table[id].leader = m;
+						} else {
+							// If by this point there are NO members, this guild is disbanded
+							// So just to be safe let's set active to 0 to make sure it
+							// won't show up in the guild list
+							pc_guild_table[id].active = FALSE;
+						}
+					}
+
+					pc_guild_table[id].levels = levels;
 					return;
 				}
 			break;
@@ -241,6 +275,20 @@ void reload_guild(int guild)
 		load_guild(gf);
 	}
 
+}
+
+MEMBER *get_member(int guild, char *name) {
+	MEMBER *m = NULL;
+
+	m = pc_guild_table[guild].members;
+	while (m != NULL) {
+		if (!str_cmp(m->name, name)) {
+			break;
+		}
+		m = m->next;
+	}
+
+	return m;
 }
 
 MEMBER *new_member_elt()
@@ -288,35 +336,6 @@ void init_guild_table()
 	pc_guild_table[GUILD_BOGUS].leader = NULL;
 	strcpy(pc_guild_table[GUILD_BOGUS].name, GUILD_BOGUS_NAME);
 	strcpy(pc_guild_table[GUILD_BOGUS].symbol, GUILD_BOGUS_SYMB);
-}
-
-void do_new_guild(CHAR_DATA* ch, char* argument)
-{
-	char arg1[MAX_INPUT_LENGTH] = "";
-	char arg2[MAX_INPUT_LENGTH] = "";
-	char arg3[MAX_INPUT_LENGTH] = "";
-	argument = one_argument(argument, arg1);
-	argument = one_argument(argument, arg2);
-	strcpy(arg3, argument);
-
-
-	if (IS_NPC(ch)) {
-		send_to_char("NPCs can't perform clan business.\n\r", ch);
-		return;
-	}
-
-	if (IS_NULLSTR(arg1)) {
-		send_to_char("What guild function would you like to perform?\n\r", ch);
-		return;
-	}
-
-	if (!strcmp(arg1, "list")) {
-		do_guild_list(ch);
-	} else if (!strcmp(arg1, "who")) {
-		do_guild_who(ch, arg2);
-	} else if (!strcmp(arg1, "establish")) {
-		do_guild_establish(ch, arg2, arg3);
-	}
 }
 
 void do_guild_establish(CHAR_DATA* ch, char* name, char* symbol)
@@ -406,7 +425,7 @@ void do_guild_establish(CHAR_DATA* ch, char* name, char* symbol)
 	save_guild(id);
 
 	// Flavor text
-	sprintf(buf, "Guild %s has been proposed with you as the leader."
+	sprintf(buf, "Guild %s has been proposed with you as the leader.\n\r"
 		"Your guild will be inactive until an immportal approves it.\n\r", symbol);
 	send_to_char(buf, ch);
 }
@@ -424,7 +443,7 @@ void do_guild_list(CHAR_DATA* ch)
 			send_to_char(buf, ch);
 			sprintf(buf, "%-20s", pc_guild_table[i].symbol);
 			send_to_char(buf, ch);
-			sprintf(buf, "%-5d\n\r", pc_guild_table[i].levels);
+			sprintf(buf, "%3d\n\r", pc_guild_table[i].levels);
 			send_to_char(buf, ch);
 		}
 	}
@@ -435,45 +454,153 @@ void do_guild_who(CHAR_DATA* ch, char* argument)
 {
 	char arg[MAX_INPUT_LENGTH] = "";
 	char buf[MAX_INPUT_LENGTH] = "";
-	bool clnFound = FALSE;
-	int i;
+	int guild;
 	MEMBER *m = NULL;
 	smash_tilde(argument);
 	argument = one_argument(argument, arg);
+	guild = guild_lookup(arg);
 
 	if (IS_NULLSTR(arg)) {
 		send_to_char("You must supply a guild name.\n\r", ch);
 		return;
 	}
 
-	for (i = 0; i < guild_number + 1; i++) {
-		if (!IS_NULLSTR(pc_guild_table[i].name) && !str_cmp(pc_guild_table[i].name, arg)) {
-			clnFound = TRUE;
-			break;
-		}
-	}
-
-	if (clnFound) {
-		m = pc_guild_table[i].members;
-		while (m != NULL) {
-			sprintf(buf, "[%s] %s\n\r", m->isLeader ? "Leader" : m->rank, m->name);
-			send_to_char(buf, ch);
-			m = m->next;
-		}
-	} else {
+	if (guild == GUILD_BOGUS) {
 		sprintf(buf, "Guild %s not found.", arg);
 		send_to_char(buf, ch);
+		return;
+	}
+
+
+	m = pc_guild_table[guild].members;
+	while (m != NULL) {
+		sprintf(buf, "[%s] %s\n\r", m->isLeader ? "Leader" : m->rank, m->name);
+		send_to_char(buf, ch);
+		m = m->next;
 	}
 }
 
-void do_rank(CHAR_DATA *ch, char *argument)
+void do_guild_approve(CHAR_DATA *ch, char *argument) 
 {
-	char arg1[MAX_INPUT_LENGTH], arg2[MAX_STRING_LENGTH];
-	char buf[MAX_STRING_LENGTH];
-	CHAR_DATA *victim;
+	int guild;
+	CHAR_DATA *leader;
+	char arg[MAX_INPUT_LENGTH] = "";
+	char buf[MAX_INPUT_LENGTH] = "";
+	char niceName[MAX_INPUT_LENGTH] = "";
+	smash_tilde(argument);
+	argument = one_argument(argument, arg);
+	guild = guild_lookup(arg);
+	strcpy(niceName, arg);
+	niceName[0] = UPPER(niceName[0]);
 
-	argument = one_argument(argument, arg1);
-	strcpy(arg2, argument);
+	if (IS_NULLSTR(arg)) {
+		send_to_char("You must supply a guild name.\n\r", ch);
+		return;
+	}
+
+	if (!IS_IMMORTAL(ch)) {
+		send_to_char("Right. Let's just have total anarchy.\n\r", ch);
+		return;
+	}
+
+	if (guild == GUILD_BOGUS) {
+		sprintf(buf, "Guild %s not found.", niceName);
+		send_to_char(buf, ch);
+		return;
+	}
+
+	pc_guild_table[guild].active = TRUE;
+
+	sprintf(buf, "Guild %s approved.\n\r", niceName);
+	send_to_char(buf, ch);
+
+	if ((leader = get_char_world(ch, pc_guild_table[guild].leader->name, TRUE)) != NULL) {
+		send_to_char("Your guild has been approved and is now active.\n\r", leader);
+	}
+
+	save_guild(guild);
+	return;
+}
+
+void do_guild_info(CHAR_DATA *ch)
+{
+	char buf[MAX_INPUT_LENGTH] = "";
+	int center_diff;
+
+	center_diff = strlen(pc_guild_table[ch->guild].symbol) - strlen(strip_color(pc_guild_table[ch->guild].symbol));
+
+	if (!ch->guild || ch->guild == GUILD_BOGUS) {
+		send_to_char("You're not in a guild.\n\r", ch);
+		return;
+	}
+
+	send_to_char("{D:{B================================================={D:{x\n\r", ch);
+	send_to_char(center_text(pc_guild_table[ch->guild].symbol, (51 + center_diff)), ch);
+	send_to_char("{x\n\r", ch);
+	send_to_char("{D:{B================================================={D:{x\n\r", ch);
+	send_to_char("\n\r", ch);
+	send_to_char(center_text("LEADER", 50), ch);
+	send_to_char("\n\r", ch);
+	send_to_char(center_text(pc_guild_table[ch->guild].leader->name, 50), ch);
+	send_to_char("\n\r", ch);
+	send_to_char("\n\r", ch);
+	send_to_char(center_text("LEVELS", 50), ch);
+	send_to_char("\n\r", ch);
+	sprintf(buf, "%d", pc_guild_table[ch->guild].levels);
+	send_to_char(center_text(buf, 50), ch);
+	send_to_char("\n\r", ch);
+	send_to_char("\n\r", ch);
+	send_to_char("{D:{B-------------------------------------------------{D:{x\n\r", ch);
+}
+
+void do_guild_apply(CHAR_DATA *ch, char *argument)
+{
+	int guild;
+	char arg[MAX_INPUT_LENGTH] = "";
+	char buf[MAX_INPUT_LENGTH] = "";
+	smash_tilde(argument);
+	argument = one_argument(argument, arg);
+	guild = guild_lookup(arg);
+	MEMBER *a;
+	CHAR_DATA *leader;
+
+	if (is_guild(ch)) {
+		send_to_char("You're already in a guild.\n\r", ch);
+		return;
+	}
+
+	if (guild == GUILD_BOGUS) {
+		sprintf(buf, "Guild %s not found.", arg);
+		send_to_char(buf, ch);
+		return;
+	}
+
+	free_string(ch->cln_apply);
+	ch->cln_apply = str_dup(arg);
+	a = new_member_elt();
+	strcpy(a->name, ch->name);
+	strcpy(a->rank, "Member");
+	a->isLeader = FALSE;
+	a->levels = ch->level;
+	pc_guild_table[guild].applicants = append_member(pc_guild_table[guild].applicants, a);
+	save_guild(guild);
+
+	sprintf(buf, "You have applied for membership to guild %s.\n\r", capitalize(arg));
+	send_to_char(buf, ch);
+
+	if ((leader = get_char_world(ch, pc_guild_table[guild].leader->name, TRUE)) != NULL) {
+		sprintf(buf, "%s has applied for membership to your guild.\n\r", ch->name);
+		send_to_char(buf, leader);
+	}
+}
+
+void do_guild_disband(CHAR_DATA *ch)
+{
+	DESCRIPTOR_DATA *d;
+	char arg[MAX_INPUT_LENGTH] = "";
+	char buf[MAX_INPUT_LENGTH] = "";
+	MEMBER *m;
+	MEMBER *a;
 
 	if (!is_guild(ch)) {
 		send_to_char("You're not even in a guild, let alone a leader.\n\r", ch);
@@ -485,32 +612,229 @@ void do_rank(CHAR_DATA *ch, char *argument)
 		return;
 	}
 
-	if (arg1[0] == '\0' || arg2[0] == '\0')
+	m = pc_guild_table[ch->guild].members;
+	while (m != NULL) {
+		nullify_member(ch->guild, m->name);
+		m = m->next;
+	}
+
+	a = pc_guild_table[ch->guild].applicants;
+	while (m != NULL) {
+		nullify_applicant(ch->guild, a->name);
+		a = a->next;
+	}
+
+	for (d = descriptor_list; d; d = d->next)
 	{
+		if (d->connected == CON_PLAYING)
+		{
+			sprintf(buf, "%s has disbanded %s.\n\r", ch->name, capitalize(pc_guild_table[ch->guild].name));
+			send_to_char(buf, d->character);
+		}
+	}
+
+	save_guild(ch->guild);
+	reload_guild(ch->guild);
+	ch->guild = GUILD_BOGUS;
+}
+
+void do_guild_expel(CHAR_DATA *ch, char *argument)
+{
+	char arg[MAX_INPUT_LENGTH] = "";
+	char buf[MAX_INPUT_LENGTH] = "";
+	smash_tilde(argument);
+	argument = one_argument(argument, arg);
+	CHAR_DATA *victim;
+
+	if (arg[0] == '\0') {
+		send_to_char("Syntax: guild expel <char>\n\r", ch);
+		return;
+	}
+
+	if (!is_guild(ch)) {
+		send_to_char("You're not even in a guild, let alone a leader.\n\r", ch);
+		return;
+	}
+
+	if (str_cmp(ch->name, pc_guild_table[ch->guild].leader->name) && !IS_IMMORTAL(ch)) {
+		send_to_char("You are not the leader of your guild.\n\r", ch);
+		return;
+	}
+
+	if (!is_in_guild(ch->guild, arg)) {
+		send_to_char("No member of that name.\n\r", ch);
+		return;
+	}
+	
+
+	sprintf(buf, "You have expelled %s from the guild.\n\r", capitalize(arg));
+	send_to_char(buf, ch);
+
+	if ((victim = get_char_world(ch, arg, TRUE)) != NULL) {
+		sprintf(buf, "You have been expelled from guild %s.\n\r", pc_guild_table[ch->guild].name);
+		send_to_char(buf, victim);
+	}
+
+	nullify_member(ch->guild, arg);
+	save_guild(ch->guild);
+	reload_guild(ch->guild);
+}
+
+void do_guild_defect(CHAR_DATA *ch)
+{
+	CHAR_DATA *leader;
+	char buf[MAX_INPUT_LENGTH] = "";
+
+	if (!is_guild(ch)) {
+		send_to_char("You're not in a guild.\n\r", ch);
+		return;
+	}
+
+	if (!str_cmp(ch->name, pc_guild_table[ch->guild].leader->name)) {
+		send_to_char("You're the leader of the guild and cannot defect. "
+			"You may {mpromote{x another guild member, or {mdisband{x the guild entirely.\n\r", ch);
+		return;
+	}
+
+	nullify_member(ch->guild, ch->name);
+	save_guild(ch->guild);
+	reload_guild(ch->guild);
+
+	sprintf(buf, "You defect from guild %s.\n\r", pc_guild_table[ch->guild].name);
+	send_to_char(buf, ch);
+
+	if ((leader = get_char_world(ch, pc_guild_table[ch->guild].leader->name, TRUE)) != NULL) {
+		sprintf(buf, "%s has defected from the guild.\n\r", ch->name);
+		send_to_char(buf, leader);
+	}
+
+	ch->guild = GUILD_BOGUS;
+}
+
+void do_rank(CHAR_DATA *ch, char *argument)
+{
+	char arg1[MAX_INPUT_LENGTH], arg2[MAX_STRING_LENGTH];
+	char buf[MAX_STRING_LENGTH];
+	CHAR_DATA *victim;
+	MEMBER *m;
+
+	argument = one_argument(argument, arg1);
+	strcpy(arg2, argument);
+
+	if (arg1[0] == '\0' || arg2[0] == '\0') {
 		send_to_char("Syntax: rank <char> <rank>\n\r", ch);
 		return;
 	}
 
-	if ((victim = get_char_world(ch, arg1, TRUE)) == NULL)
-	{
+	if (!is_guild(ch)) {
+		send_to_char("You're not even in a guild, let alone a leader.\n\r", ch);
+		return;
+	}
+
+	if (str_cmp(ch->name, pc_guild_table[ch->guild].leader->name) && !IS_IMMORTAL(ch)) {
+		send_to_char("You are not the leader of your guild.\n\r", ch);
+		return;
+	}
+
+	if ((victim = get_char_world(ch, arg1, TRUE)) == NULL) {
 		send_to_char("They aren't here.\n\r", ch);
 		return;
 	}
 
+	if (victim->guild != ch->guild && !IS_IMMORTAL(ch)) {
+		send_to_char("You aren't their leader.\n\r", ch);
+		return;
+	}
+
+	
 	free_string(victim->title_guild);
 	smash_tilde(arg2);
 	sprintf(buf, "%s", arg2);
 	victim->title_guild = str_dup(buf);
+	
+	m = get_member(victim->guild, victim->name);
+	if (m != NULL) {
+		strcpy(m->rank, buf);
+	}
 
 	sprintf(buf, "They have achieved %s status within the guild.\n\r", arg2);
 	send_to_char(buf, ch);
 	sprintf(buf, "You have achieved %s status within the guild.\n\r", arg2);
 	send_to_char(buf, victim);
+
+	save_guild(ch->guild);
+}
+
+void do_guild_accept(CHAR_DATA *ch, char *argument)
+{
+	char arg[MAX_INPUT_LENGTH];
+	CHAR_DATA *applicant;
+	char buf[MAX_STRING_LENGTH];
+	argument = one_argument(argument, arg);
+	applicant = get_char_world(ch, arg, TRUE);
+	MEMBER *m;
+
+	if (arg[0] == '\0') {
+		send_to_char("Syntax: guild accept <char>\n\r", ch);
+		return;
+	}
+
+	if (!is_guild(ch)) {
+		send_to_char("You're not even in a guild, let alone a leader.\n\r", ch);
+		return;
+	}
+
+	if (str_cmp(ch->name, pc_guild_table[ch->guild].leader->name) && !IS_IMMORTAL(ch)) {
+		send_to_char("You are not the leader of your guild.\n\r", ch);
+		return;
+	}
+
+	if (applicant == NULL) {
+		send_to_char("They have to be present.", ch);
+		return;
+	}
+
+	if (guild_lookup(applicant->cln_apply) != ch->guild) {
+		send_to_char("They aren't applying to your guild. Perhaps ask?", ch);
+		return;
+	}
+
+	applicant->guild = ch->guild;
+	free_string(applicant->cln_apply);
+	nullify_applicant(ch->guild, applicant->name);
+
+	m = new_member_elt();
+	strcpy(m->name, applicant->name);
+	strcpy(m->rank, "Member");
+	m->levels = applicant->level;
+
+	pc_guild_table[ch->guild].members = append_member(pc_guild_table[ch->guild].members, m);
+
+	sprintf(buf, "You have accepted %s into the guild.\n\r", applicant->name);
+	send_to_char(buf, ch);
+
+	sprintf(buf, "You have been accepted into %s.\n\r", capitalize(pc_guild_table[ch->guild].name));
+	send_to_char(buf, applicant);
+
+	save_guild(ch->guild);
+	reload_guild(ch->guild);
 }
 
 bool is_in_guild(int guild, char *name) {
 	MEMBER *m;
 	m = pc_guild_table[guild].members;
+	while (m != NULL) {
+		if (!str_cmp(name, m->name)) {
+			return TRUE;
+		}
+		m = m->next;
+	}
+	return FALSE;
+}
+
+bool is_applicant(int guild, char *name) {
+	MEMBER *m;
+	m = pc_guild_table[guild].applicants;
 	while (m != NULL) {
 		if (!str_cmp(name, m->name)) {
 			return TRUE;
@@ -527,7 +851,20 @@ void nullify_member(int guild, char *name)
 	while (m != NULL) {
 		if (!str_cmp(name, m->name)) {
 			m->name[0] = '\0';
-			m->isLeader = FALSE;
+			m->levels = 0;
+			m->rank[0] = '\0';
+		}
+		m = m->next;
+	}
+}
+
+void nullify_applicant(int guild, char *name)
+{
+	MEMBER *m;
+	m = pc_guild_table[guild].applicants;
+	while (m != NULL) {
+		if (!str_cmp(name, m->name)) {
+			m->name[0] = '\0';
 			m->levels = 0;
 			m->rank[0] = '\0';
 		}

@@ -160,7 +160,7 @@ bool loadClans( void )
   char newSymbol[ MAX_INPUT_LENGTH ] = "";
   time_t newTime;
   char* tempLine = NULL;
-  int lineLength = 0;
+  size_t lineLength = 0;
 
   clansFile = fopen( CLANS_FILE, "r" );
   if( clansFile == NULL )
