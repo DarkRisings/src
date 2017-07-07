@@ -34,31 +34,32 @@ struct pc_guild_member
 //
 // Local functions
 //
-void load_new_guilds(void);
-void load_guild(FILE *fp);
 MEMBER *new_member_elt(void);
 MEMBER *append_member(MEMBER * list, MEMBER * elt);
+MEMBER *get_member(int guild, char *name);
+MEMBER *get_applicant(int guild, char *name);
+bool is_in_guild(int guild, char *name);
+bool is_applicant(int guild, char *name);
+bool can_perform_action(MEMBER *m, char *action);
+void load_new_guilds(void);
+void load_guild(FILE *fp);
+void save_guild(int guild);
+void save_guilds();
+void nullify_applicant(int guild, char *name);
+void nullify_member(int guild, char *name);
+void do_guild_expel(CHAR_DATA *ch, char *name);
+void do_guild_defect(CHAR_DATA *ch);
+void do_guild_disband(CHAR_DATA *ch);
+void do_guild_rank(CHAR_DATA *ch, char *name, char *rank);
+void do_guild_title(CHAR_DATA *ch, char *name, char *title);
 void do_guild_who(CHAR_DATA* ch, char* argument);
 void do_guild_list(CHAR_DATA* ch);
 void do_guild_establish(CHAR_DATA* ch, char* name, char* symbol);
-bool is_in_guild(int guild, char *name);
-void save_guild(int guild);
-void save_guilds();
-MEMBER *get_member(int guild, char *name);
 void do_guild_apply(CHAR_DATA *ch, char *argument);
 void do_guild_approve(CHAR_DATA *ch, char *argument);
 void do_guild_info(CHAR_DATA *ch);
 void do_guild_accept(CHAR_DATA *ch, char *argument);
-void nullify_applicant(int guild, char *name);
-void nullify_member(int guild, char *name);
-void do_guild_expel(CHAR_DATA *ch, char *argument);
-void do_guild_defect(CHAR_DATA *ch);
-bool is_applicant(int guild, char *name);
-void do_guild_disband(CHAR_DATA *ch);
-bool can_perform_action(MEMBER *m, char *action);
-void do_guild_rank(CHAR_DATA *ch, char *argument);
-
-//
-// External declarations
-//
-char *center_text(char *txtstr, int txtnum);
+void get_guild_cmd_list(CHAR_DATA *ch);
+void do_guild_prospects(CHAR_DATA* ch);
+void do_guild_symbol(CHAR_DATA *ch, char *symbol);
+void do_guild_decline(CHAR_DATA *ch, char *name);

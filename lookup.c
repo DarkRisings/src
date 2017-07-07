@@ -73,7 +73,7 @@ int guild_lookup(const char *name)
 {
     int iGuild;
 
-    for (iGuild = 0; iGuild < MAX_GUILD; iGuild++)
+    for (iGuild = 0; iGuild < MAX_PC_GUILD; iGuild++)
     {
 	if (LOWER(name[0]) == LOWER(pc_guild_table[iGuild].name[0])
 	&&  !str_prefix(name, pc_guild_table[iGuild].name))

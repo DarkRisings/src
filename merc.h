@@ -139,7 +139,7 @@ typedef void SPELL_FUN	args( ( int sn, int level, CHAR_DATA *ch, void *vo,\
 #define GUILD_BOGUS 0
 #define GUILD_DIR "../guilds"
 #define GUILDINDEX "guildindex"
-#define MAX_PC_GUILD 20
+#define MAX_PC_GUILD 500
 #define GUILD_BOGUS_NAME    "ClanBogus"
 #define GUILD_BOGUS_SYMB    "`f<`cBOGUS`f>``"
 #define GUILD_RES_IDENT_MIN 1
@@ -3018,6 +3018,7 @@ extern const char RAVNOS_PAT[];
 extern const char TRAMUIR_PAT[];
 extern const char FEROCAI_PAT[];
 extern const char default_prompt[];
+char *center_text args((char *txtstr, int txtnum));
 
 /* act_move.c */
 void	move_char	args( ( CHAR_DATA *ch, int door, bool follow ) );
@@ -3036,6 +3037,7 @@ void    get_obj         args( ( CHAR_DATA *ch, OBJ_DATA *obj,
 void wiznet		args( (char *string, CHAR_DATA *ch, OBJ_DATA *obj,
 			       long flag, long flag_skip, int min_level ) );
 void check_multiplay    args( (CHAR_DATA *ch) );
+
 
 /* ban.c */
 bool	check_ban	args( ( char *site, int type) );
@@ -3158,7 +3160,6 @@ char    *strsep         args( ( char** str, const char* delims) );
 #endif
 AD  	*affect_find    args( (AFFECT_DATA *paf, int sn));
 char    *strip_color	args( ( const char *str ) );
-char    *strip_whitespace args((const char *str));
 char    *escape_color	args( ( const char *str ) );
 char    *smash_crlf     args( ( const char *str ) );
 void	affect_check	args( (CHAR_DATA *ch, int where, int vector) );

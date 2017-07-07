@@ -802,7 +802,7 @@ void do_guildtalk( CHAR_DATA *ch, char *argument )
 			&& !IS_SET(d->character->comm,COMM_QUIET) )  {
 
 			sprintf( buf, "%s%s %s: {%c'%s'{x\n\r",
-				pc_guild_table[ ch->guild ].symbol,ch->title_guild,
+				pc_guild_table[ ch->guild ].symbol, m->gtitle,
 				(IS_NPC( ch ) ? capitalize(PERS2( ch, d->character)) :  ch->name ),
 				d->character->colors[ C_GDT ],
 				argument 

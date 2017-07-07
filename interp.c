@@ -122,7 +122,7 @@ const	struct	cmd_type	cmd_table	[] =
     { "learn",       	do_learn,	POS_SLEEPING,   30,  LOG_NORMAL, 1 },
     { "quest",		do_quest,	POS_SLEEPING,	 0,  LOG_NORMAL, 1 },
     { "rest",		do_rest,	POS_SLEEPING,	 0,  LOG_NORMAL, 1 },
-    { "rank",           do_rank,        POS_DEAD,       0,  LOG_ALWAYS, 1 },
+   // { "rank",           do_rank,        POS_DEAD,       0,  LOG_ALWAYS, 1 },
     { "sit",		do_sit,		POS_SLEEPING,    0,  LOG_NORMAL, 1 },
     { "sockets",        do_sockets,	POS_DEAD,       L3,  LOG_NORMAL, 1 },
     { "stand",		do_stand,	POS_SLEEPING,	 0,  LOG_NORMAL, 1 },
