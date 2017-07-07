@@ -525,6 +525,7 @@ void do_guild_approve(CHAR_DATA *ch, char *argument)
 	smash_tilde(argument);
 	argument = one_argument(argument, arg);
 	guild = guild_lookup(arg);
+	DESCRIPTOR_DATA *d;
 
 	if (IS_NULLSTR(arg)) {
 		send_to_char("You must supply a guild name.\n\r", ch);
@@ -549,6 +550,17 @@ void do_guild_approve(CHAR_DATA *ch, char *argument)
 
 	if ((leader = get_char_world(ch, pc_guild_table[guild].leader->name, TRUE)) != NULL) {
 		send_to_char("Your guild has been approved and is now active.\n\r", leader);
+	}
+
+	for (d = descriptor_list; d; d = d->next)
+	{
+		if (d->connected == CON_PLAYING)
+		{
+			sprintf(buf, "{gGuild {G%s {ghas been established, led by {G%s{g.{x\n\r", 
+				capitalize(pc_guild_table[guild].name), 
+				capitalize(pc_guild_table[guild].leader->name));
+			send_to_char(buf, d->character);
+		}
 	}
 
 	save_guild(guild);
@@ -667,7 +679,7 @@ void do_guild_disband(CHAR_DATA *ch)
 	{
 		if (d->connected == CON_PLAYING)
 		{
-			sprintf(buf, "%s has disbanded %s.\n\r", ch->name, capitalize(pc_guild_table[ch->guild].name));
+			sprintf(buf, "{R%s {rhas disbanded %s.{x\n\r", ch->name, capitalize(pc_guild_table[ch->guild].name));
 			send_to_char(buf, d->character);
 		}
 	}
@@ -682,6 +694,7 @@ void do_guild_expel(CHAR_DATA *ch, char *name)
 	char buf[MAX_INPUT_LENGTH] = "";
 	CHAR_DATA *victim;
 	MEMBER *m;
+	MEMBER *t;
 
 	if (name[0] == '\0') {
 		send_to_char("Syntax: guild expel <char>\n\r", ch);
@@ -702,6 +715,12 @@ void do_guild_expel(CHAR_DATA *ch, char *name)
 
 	if (!is_in_guild(ch->guild, name)) {
 		send_to_char("No member of that name.\n\r", ch);
+		return;
+	}
+
+	t = get_member(ch->guild, name);
+	if (t->isLeader || t->rank >= m->rank) {
+		send_to_char("I don't think so.\n\r", ch);
 		return;
 	}
 	
@@ -798,9 +817,11 @@ void do_guild_title(CHAR_DATA *ch, char *name, char *title)
 
 void do_guild_rank(CHAR_DATA *ch, char *name, char *rank)
 {
+	CHAR_DATA *member;
 	int newRank;
 	MEMBER *c;
 	MEMBER *t;
+	member = get_char_world(ch, name, TRUE);
 
 	if (!is_guild(ch)) {
 		send_to_char("You're not even in a guild, let alone a leader.\n\r", ch);
@@ -829,8 +850,14 @@ void do_guild_rank(CHAR_DATA *ch, char *name, char *rank)
 			return;
 		} else if (newRank > t->rank) {
 			send_to_char("They have been promoted.\n\r", ch);
+			if (member != NULL) {
+				send_to_char("You have been promoted.", member);
+			}
 		} else {
 			send_to_char("They have been demoted.\n\r", ch);
+			if (member != NULL) {
+				send_to_char("You have been demoted.", member);
+			}
 		}
 
 		t->rank = newRank;
