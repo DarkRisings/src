@@ -31,25 +31,24 @@ struct pc_guild_member
 	int rank;
 };
 
-typedef bool(*GuildCommandHandler)(CHAR_DATA* ch, char* argument);
+typedef	void GuildCoammnd args((CHAR_DATA *ch, char *argument));
 
 //
 // table for holding all the guild commands
 //
-typedef struct cmd_table_type
+typedef struct guild_cmd_type
 {
-	char *cmd[MAX_INPUT_LENGTH];
-	GuildCommandHandler function;
+	char * const cmd;
+	GuildCoammnd * function;
 	int requiredRank;
 	bool leaderOnly;
 	bool immOnly;
 	bool guildOnly;
-} GCOMMAND;
+};
 
 //
 // Local functions
 //
-GCOMMAND *cmd_lookup(char *arg);
 MEMBER *new_member_elt(void);
 MEMBER *append_member(MEMBER * list, MEMBER * elt);
 MEMBER *get_member(int guild, char *name);
