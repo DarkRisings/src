@@ -21,15 +21,16 @@ GCOMMAND cmdTbl[] =
 	{ "apply", do_guild_apply, 0, FALSE, FALSE, FALSE },
 	{ "approve", do_guild_approve, 0, FALSE, TRUE, FALSE },
 	{ "info", do_guild_info, 0, FALSE, FALSE, FALSE },
+	{ "who", do_guild_who, 0, FALSE, FALSE, FALSE },
 	{ "accept", do_guild_accept, 2, FALSE, FALSE, TRUE },
 	{ "defect", do_guild_defect, 1, FALSE, FALSE, TRUE },
 	{ "expel", do_guild_expel, 3, FALSE, FALSE, TRUE },
-	{ "disband", do_guild_disband, 0, TRUE, FALSE, FALSE },
-	{ "title", do_guild_title, 0, TRUE, FALSE, FALSE },
-	{ "rank", do_guild_rank, 0, TRUE, FALSE, FALSE },
-	{ "prospects", do_guild_prospects, 2, FALSE, FALSE, FALSE },
-	{ "symbol", do_guild_symbol, 0, TRUE, FALSE, FALSE },
-	{ "decline", do_guild_decline, 2, FALSE, FALSE, FALSE },
+	{ "disband", do_guild_disband, 0, TRUE, FALSE, TRUE },
+	{ "title", do_guild_title, 0, TRUE, FALSE, TRUE },
+	{ "rank", do_guild_rank, 0, TRUE, FALSE, TRUE },
+	{ "prospects", do_guild_prospects, 2, FALSE, FALSE, TRUE },
+	{ "symbol", do_guild_symbol, 0, TRUE, FALSE, TRUE },
+	{ "decline", do_guild_decline, 2, FALSE, FALSE, TRUE },
 	{ "set", do_guild_list, 0, FALSE, FALSE, FALSE },
 	{ NULL, NULL, 0, FALSE, FALSE, FALSE },
 };
@@ -37,10 +38,14 @@ GCOMMAND cmdTbl[] =
 void do_new_guild(CHAR_DATA* ch, char* argument)
 {
 	GCOMMAND *cmd;
+	bool success = FALSE;
+	MEMBER *m;
 	char arg1[MAX_INPUT_LENGTH] = "";
 	char arg2[MAX_INPUT_LENGTH] = "";
 	char arg3[MAX_INPUT_LENGTH] = "";
 	argument = one_argument(argument, arg1);
+	cmd = cmd_lookup(arg1);
+	m = get_member(ch->guild, ch->name);
 
 	if (IS_NPC(ch)) {
 		send_to_char("NPCs can't perform clan business.\n\r", ch);
@@ -52,9 +57,38 @@ void do_new_guild(CHAR_DATA* ch, char* argument)
 		get_guild_cmd_list(ch);
 		return;
 	}
+
+	if (cmd == NULL) {
+		send_to_char("Invalid command.\n\r", ch);
+		get_guild_cmd_list(ch);
+		return;
+	}
+
+	if (cmd->guildOnly && !is_guild(ch)) {
+		send_to_char("You're not in a guild.\n\r", ch);
+		return;
+	}
+
+	if (cmd->leaderOnly && !m->isLeader) {
+		send_to_char("You're not the leader of your guild.\n\r", ch);
+		return;
+	}
+
+	if (cmd->requiredRank > m->rank) {
+		send_to_char("You are not high enough rank to perform that action.\n\r", ch);
+		return;
+	}
+
+	if (cmd->immOnly && !IS_IMMORTAL(ch)) {
+		send_to_char("Invalid command.\n\r", ch);
+		get_guild_cmd_list(ch);
+		return;
+	}
+
+	success = (cmd->function)(ch, argument);
 }
 
-GCOMMAND *cmd_lookup(arg)
+GCOMMAND *cmd_lookup(char *arg)
 {
 	GCOMMAND *cmd = cmdTbl;
 	int i;
@@ -335,36 +369,22 @@ void init_guild_table()
 	strcpy(pc_guild_table[GUILD_BOGUS].symbol, GUILD_BOGUS_SYMB);
 }
 
-void do_guild_establish(CHAR_DATA* ch, char* name, char* symbol)
+void do_guild_establish(CHAR_DATA* ch, char* argument)
 {
 	int id;
 	int i;
 	MEMBER* m;
-	char symBuf[MAX_INPUT_LENGTH] = "";
-	char nameBuf[MAX_INPUT_LENGTH] = "";
+	char symbol[MAX_INPUT_LENGTH] = "";
+	char name[MAX_INPUT_LENGTH] = "";
 	char buf[MAX_INPUT_LENGTH] = "";
 	FILE *guildIndex;
-	symbol = preserve_case_one_argument(symbol, symBuf);
-	name = one_argument(name, nameBuf);
+	FILE *player;
+	argument = one_argument(argument, name);
+	argument = preserve_case_one_argument(argument, symbol);
 
-	if (IS_NULLSTR(nameBuf) || IS_NULLSTR(symBuf)) {
+	if (IS_NULLSTR(name) || IS_NULLSTR(symbol)) {
 		send_to_char("Syntax: guild establish <name> <symbol>\n\r", ch);
 		return;
-	}
-
-	// First we have to make sure that this name hasn't already
-	// been taken. This covers inactive guilds as well.
-	for (i = 0; i < guild_number + 1; i++) {
-		if (!IS_NULLSTR(pc_guild_table[i].name) && !str_cmp(nameBuf, pc_guild_table[i].name)) {
-			send_to_char("That guild name has already been taken."
-						 "It may be inactive and you may be able to claim it. Please see an imm.\n\r", ch);
-			return;
-		}
-
-		if (!IS_NULLSTR(pc_guild_table[i].symbol) && !str_cmp(symBuf, pc_guild_table[i].symbol)) {
-			send_to_char("Please choose a unique symbol.\n\r", ch);
-			return;
-		}
 	}
 
 	// Make sure this player isn't in a guild. 
@@ -372,6 +392,30 @@ void do_guild_establish(CHAR_DATA* ch, char* name, char* symbol)
 		send_to_char("You're already in a guild.\n\r", ch);
 		return;
 	}
+
+	// First we have to make sure that this name hasn't already
+	// been taken. This covers inactive guilds as well.
+	for (i = 0; i < guild_number + 1; i++) {
+		if (!IS_NULLSTR(pc_guild_table[i].name) && !str_cmp(name, pc_guild_table[i].name)) {
+			send_to_char("That guild name has already been taken."
+						 "It may be inactive and you may be able to claim it. Please see an imm.\n\r", ch);
+			return;
+		}
+
+		if (!IS_NULLSTR(pc_guild_table[i].symbol) && !str_cmp(symbol, pc_guild_table[i].symbol)) {
+			send_to_char("Please choose a unique symbol.\n\r", ch);
+			return;
+		}
+	}
+
+	// Make sure it's not a player name.
+	sprintf(buf, "../player/%s", name);
+	player = fopen(buf, "r");
+	if (player != NULL) {
+		send_to_char("Invalid guild name.\n\r", ch);
+		return;
+	}
+	fclose(player);
 
 	// Assign the guild an ID, and increase the
 	// global guild number.
@@ -382,11 +426,11 @@ void do_guild_establish(CHAR_DATA* ch, char* name, char* symbol)
 	ch->guild = id;
 
 	// Format symbol
-	sprintf(buf, "%s ", symBuf);
+	sprintf(buf, "%s ", symbol);
 	strcpy(pc_guild_table[id].symbol, buf);
 
 	// Set name
-	strcpy(pc_guild_table[id].name, nameBuf);
+	strcpy(pc_guild_table[id].name, name);
 
 	// Set identity
 	pc_guild_table[id].ident = id;
@@ -414,12 +458,12 @@ void do_guild_establish(CHAR_DATA* ch, char* name, char* symbol)
 	// Open guild index and write this guild to it
 	sprintf(buf, "%s/%s", GUILD_DIR, GUILDINDEX);
 	guildIndex = fopen(buf, "a");
-	sprintf(buf, "\n%s", nameBuf);
+	sprintf(buf, "\n%s", name);
 	fprintf(guildIndex, buf);
 	fclose(guildIndex);
 
 	// Create the guild file
-	sprintf(buf, "%s/%s.gld", GUILD_DIR, nameBuf);
+	sprintf(buf, "%s/%s.gld", GUILD_DIR, name);
 	FILE *fp = fopen(buf, "ab+");
 	fclose(fp);
 
@@ -428,11 +472,11 @@ void do_guild_establish(CHAR_DATA* ch, char* name, char* symbol)
 
 	// Flavor text
 	sprintf(buf, "Guild %s has been proposed with you as the leader.\n\r"
-		"Your guild will be inactive until an immportal approves it.\n\r", symBuf);
+		"Your guild will be inactive until an immportal approves it.\n\r", symbol);
 	send_to_char(buf, ch);
 }
 
-void do_guild_list(CHAR_DATA* ch)
+void do_guild_list(CHAR_DATA* ch, char* argument)
 {
 	int i;
 	char buf[MAX_INPUT_LENGTH] = "";
@@ -491,23 +535,11 @@ void do_guild_who(CHAR_DATA* ch, char* argument)
 	}
 }
 
-void do_guild_prospects(CHAR_DATA* ch)
+void do_guild_prospects(CHAR_DATA* ch, char* argument)
 {
 	char buf[MAX_INPUT_LENGTH] = "";
 	MEMBER *m = NULL;
 	MEMBER *applicant = NULL;
-
-	if (!is_guild(ch)) {
-		send_to_char("You're not even in a guild.\n\r", ch);
-		return;
-	}
-
-	m = get_member(ch->guild, ch->name);
-
-	if (!can_perform_action(m, "prospects") && !IS_IMMORTAL(ch)) {
-		send_to_char("You're not high enough rank to perform that action.\n\r", ch);
-		return;
-	}
 
 	send_to_char("Applying to your guild: \n\r", ch);
 	applicant = pc_guild_table[ch->guild].applicants;
@@ -534,11 +566,6 @@ void do_guild_approve(CHAR_DATA *ch, char *argument)
 		return;
 	}
 
-	if (!IS_IMMORTAL(ch)) {
-		send_to_char("Right. Let's just have total anarchy.\n\r", ch);
-		return;
-	}
-
 	if (guild == GUILD_BOGUS) {
 		sprintf(buf, "Guild %s not found.", capitalize(arg));
 		send_to_char(buf, ch);
@@ -560,7 +587,7 @@ void do_guild_approve(CHAR_DATA *ch, char *argument)
 		{
 			sprintf(buf, "{gGuild {G%s {ghas been established, led by {G%s{g.{x\n\r", 
 				capitalize(pc_guild_table[guild].name), 
-				capitalize(pc_guild_table[guild].leader->name));
+				pc_guild_table[guild].leader->name);
 			send_to_char(buf, d->character);
 		}
 	}
@@ -569,7 +596,7 @@ void do_guild_approve(CHAR_DATA *ch, char *argument)
 	return;
 }
 
-void do_guild_info(CHAR_DATA *ch)
+void do_guild_info(CHAR_DATA *ch, char *argument)
 {
 	char buf[MAX_INPUT_LENGTH] = "";
 	int center_diff;
@@ -648,22 +675,12 @@ void do_guild_apply(CHAR_DATA *ch, char *argument)
 	}
 }
 
-void do_guild_disband(CHAR_DATA *ch)
+void do_guild_disband(CHAR_DATA *ch, char *argument)
 {
 	DESCRIPTOR_DATA *d;
 	char buf[MAX_INPUT_LENGTH] = "";
 	MEMBER *m;
 	MEMBER *a;
-
-	if (!is_guild(ch)) {
-		send_to_char("You're not even in a guild, let alone a leader.\n\r", ch);
-		return;
-	}
-
-	if (str_cmp(ch->name, pc_guild_table[ch->guild].leader->name) && !IS_IMMORTAL(ch)) {
-		send_to_char("You are not the leader of your guild.\n\r", ch);
-		return;
-	}
 
 	m = pc_guild_table[ch->guild].members;
 	while (m != NULL) {
@@ -691,27 +708,17 @@ void do_guild_disband(CHAR_DATA *ch)
 	ch->guild = GUILD_BOGUS;
 }
 
-void do_guild_expel(CHAR_DATA *ch, char *name)
+void do_guild_expel(CHAR_DATA *ch, char *argument)
 {
 	char buf[MAX_INPUT_LENGTH] = "";
+	char name[MAX_INPUT_LENGTH] = "";
 	CHAR_DATA *victim;
 	MEMBER *m;
 	MEMBER *t;
+	argument = one_argument(argument, name);
 
 	if (name[0] == '\0') {
 		send_to_char("Syntax: guild expel <char>\n\r", ch);
-		return;
-	}
-
-	if (!is_guild(ch)) {
-		send_to_char("You're not in a guild.\n\r", ch);
-		return;
-	}
-
-	m = get_member(ch->guild, ch->name);
-
-	if (!can_perform_action(m, "expel") && !IS_IMMORTAL(ch)) {
-		send_to_char("You are not high enough rank to perform that action.\n\r", ch);
 		return;
 	}
 
@@ -740,18 +747,14 @@ void do_guild_expel(CHAR_DATA *ch, char *name)
 	reload_guild(ch->guild);
 }
 
-void do_guild_defect(CHAR_DATA *ch)
+void do_guild_defect(CHAR_DATA *ch, char *argument)
 {
 	CHAR_DATA *leader;
 	char buf[MAX_INPUT_LENGTH] = "";
 
-	if (!is_guild(ch)) {
-		send_to_char("You're not in a guild.\n\r", ch);
-		return;
-	}
 
 	if (!str_cmp(ch->name, pc_guild_table[ch->guild].leader->name)) {
-		send_to_char("You're the leader of the guild and cannot defect. "
+		send_to_char("You're the leader of the guild and cannot defect. \n\r"
 			"You may {mpromote{x another guild member, or {mdisband{x the guild entirely.\n\r", ch);
 		return;
 	}
@@ -771,24 +774,18 @@ void do_guild_defect(CHAR_DATA *ch)
 	ch->guild = GUILD_BOGUS;
 }
 
-void do_guild_title(CHAR_DATA *ch, char *name, char *title)
+void do_guild_title(CHAR_DATA *ch, char *argument)
 {
 	char buf[MAX_STRING_LENGTH];
+	char name[MAX_STRING_LENGTH];
+	char title[MAX_STRING_LENGTH];
 	CHAR_DATA *victim;
 	MEMBER *m;
+	argument = one_argument(argument, name);
+	strcpy(title, argument);
 
 	if (name[0] == '\0' || title[0] == '\0') {
 		send_to_char("Syntax: guild title <char> <title>\n\r", ch);
-		return;
-	}
-
-	if (!is_guild(ch)) {
-		send_to_char("You're not even in a guild, let alone a leader.\n\r", ch);
-		return;
-	}
-
-	if (str_cmp(ch->name, pc_guild_table[ch->guild].leader->name) && !IS_IMMORTAL(ch)) {
-		send_to_char("You are not the leader of your guild.\n\r", ch);
 		return;
 	}
 
@@ -817,27 +814,20 @@ void do_guild_title(CHAR_DATA *ch, char *name, char *title)
 	save_guild(ch->guild);
 }
 
-void do_guild_rank(CHAR_DATA *ch, char *name, char *rank)
+void do_guild_rank(CHAR_DATA *ch, char *argument)
 {
+	char name[MAX_STRING_LENGTH];
+	char rank[MAX_STRING_LENGTH];
 	CHAR_DATA *member;
 	int newRank;
-	MEMBER *c;
 	MEMBER *t;
+	MEMBER *c;
+
+	argument = one_argument(argument, name);
+	argument = one_argument(argument, rank);
 	member = get_char_world(ch, name, TRUE);
-
-	if (!is_guild(ch)) {
-		send_to_char("You're not even in a guild, let alone a leader.\n\r", ch);
-		return;
-	}
-
-	c = get_member(ch->guild, ch->name);
-
-	if (!can_perform_action(c, "promote") && !IS_IMMORTAL(ch)) {
-		send_to_char("You are not the leader of your guild.\n\r", ch);
-		return;
-	}
-
 	t = get_member(ch->guild, name);
+	c = get_member(ch->guild, ch->name);
 
 	if (t == NULL) {
 		send_to_char("They're not in your guild.\n\r", ch);
@@ -877,9 +867,10 @@ void do_guild_rank(CHAR_DATA *ch, char *name, char *rank)
 	}
 }
 
-void do_guild_symbol(CHAR_DATA *ch, char *symbol)
+void do_guild_symbol(CHAR_DATA *ch, char *argument)
 {
-	char buf[MAX_STRING_LENGTH];
+	char symbol[MAX_STRING_LENGTH];
+	argument = preserve_case_one_argument(argument, symbol);
 
 	if (!is_guild(ch)) {
 		send_to_char("You're not even in a guild, let alone a leader.\n\r", ch);
@@ -896,42 +887,31 @@ void do_guild_symbol(CHAR_DATA *ch, char *symbol)
 		return;
 	}
 
-	sprintf(buf, "%s", symbol);
-	strcpy(pc_guild_table[ch->guild].symbol, buf);
-
+	strcpy(pc_guild_table[ch->guild].symbol, symbol);
 	send_to_char("The guild symbol has been updated.\n\r", ch);
 }
 
-void do_guild_decline(CHAR_DATA *ch, char *name)
+void do_guild_decline(CHAR_DATA *ch, char *argument)
 {
 	CHAR_DATA *applicant;
 	char buf[MAX_STRING_LENGTH];
+	char name[MAX_STRING_LENGTH];
 	MEMBER *a;
 	MEMBER *m;
-	a = get_applicant(ch->guild, name);
+	argument = one_argument(argument, name);
 
 	if (name[0] == '\0') {
 		send_to_char("Syntax: guild accept <char>\n\r", ch);
 		return;
 	}
 
-	if (!is_guild(ch)) {
-		send_to_char("You're not even in a guild, let alone a leader.\n\r", ch);
-		return;
-	}
-
+	a = get_applicant(ch->guild, name);
 	m = get_member(ch->guild, ch->name);
-
-	if (!can_perform_action(m, "decline") && !IS_IMMORTAL(ch)) {
-		send_to_char("You are not high enough rank to perform that action.\n\r", ch);
-		return;
-	}
 
 	if (a == NULL) {
 		send_to_char("They aren't applying to your guild, so I guess we're good.", ch);
 		return;
 	}
-
 
 	sprintf(buf, "You have declined %s's application.\n\r", a->name);
 	send_to_char(buf, ch);
@@ -961,16 +941,6 @@ void do_guild_accept(CHAR_DATA *ch, char *argument)
 
 	if (arg[0] == '\0') {
 		send_to_char("Syntax: guild accept <char>\n\r", ch);
-		return;
-	}
-
-	if (!is_guild(ch)) {
-		send_to_char("You're not even in a guild, let alone a leader.\n\r", ch);
-		return;
-	}
-
-	if (!can_perform_action(m, "accept") && !IS_IMMORTAL(ch)) {
-		send_to_char("You are not high enough rank to perform this action.\n\r", ch);
 		return;
 	}
 
@@ -1122,29 +1092,4 @@ void nullify_applicant(int guild, char *name)
 		}
 		m = m->next;
 	}
-}
-
-bool can_perform_action(MEMBER *m, char *action) 
-{
-	if (m->isLeader) {
-		return TRUE;
-	}
-
-	if (!str_cmp(action, "accept") && m->rank < 2) {
-		return FALSE;
-	}
-
-	if (!str_cmp(action, "decline") && m->rank < 2) {
-		return FALSE;
-	}
-
-	if (!str_cmp(action, "prospects") && m->rank < 2) {
-		return FALSE;
-	}
-
-	if (!str_cmp(action, "expel") && m->rank < 3) {
-		return FALSE;
-	}
-
-	return TRUE;
 }
