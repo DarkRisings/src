@@ -367,7 +367,7 @@ void init_guild_table()
 	strcpy(pc_guild_table[GUILD_BOGUS].symbol, GUILD_BOGUS_SYMB);
 }
 
-void do_guild_establish(CHAR_DATA* ch, char* argument)
+bool do_guild_establish(CHAR_DATA* ch, char* argument)
 {
 	int id;
 	int i;
@@ -382,13 +382,13 @@ void do_guild_establish(CHAR_DATA* ch, char* argument)
 
 	if (IS_NULLSTR(name) || IS_NULLSTR(symbol)) {
 		send_to_char("Syntax: guild establish <name> <symbol>\n\r", ch);
-		return;
+		return FALSE;
 	}
 
 	// Make sure this player isn't in a guild. 
 	if (is_guild(ch)) {
 		send_to_char("You're already in a guild.\n\r", ch);
-		return;
+		return FALSE;
 	}
 
 	// First we have to make sure that this name hasn't already
@@ -397,12 +397,12 @@ void do_guild_establish(CHAR_DATA* ch, char* argument)
 		if (!IS_NULLSTR(pc_guild_table[i].name) && !str_cmp(name, pc_guild_table[i].name)) {
 			send_to_char("That guild name has already been taken."
 						 "It may be inactive and you may be able to claim it. Please see an imm.\n\r", ch);
-			return;
+			return FALSE;
 		}
 
 		if (!IS_NULLSTR(pc_guild_table[i].symbol) && !str_cmp(symbol, pc_guild_table[i].symbol)) {
 			send_to_char("Please choose a unique symbol.\n\r", ch);
-			return;
+			return FALSE;
 		}
 	}
 
@@ -411,7 +411,7 @@ void do_guild_establish(CHAR_DATA* ch, char* argument)
 	player = fopen(buf, "r");
 	if (player != NULL) {
 		send_to_char("Invalid guild name.\n\r", ch);
-		return;
+		return FALSE;
 	}
 	fclose(player);
 
@@ -472,9 +472,10 @@ void do_guild_establish(CHAR_DATA* ch, char* argument)
 	sprintf(buf, "Guild %s has been proposed with you as the leader.\n\r"
 		"Your guild will be inactive until an immportal approves it.\n\r", symbol);
 	send_to_char(buf, ch);
+	return TRUE;
 }
 
-void do_guild_list(CHAR_DATA* ch, char* argument)
+bool do_guild_list(CHAR_DATA* ch, char* argument)
 {
 	int i;
 	char buf[MAX_INPUT_LENGTH] = "";
@@ -495,7 +496,7 @@ void do_guild_list(CHAR_DATA* ch, char* argument)
 	send_to_char(":---------------------------------------------:\n\r", ch);
 }
 
-void do_guild_who(CHAR_DATA* ch, char* argument)
+bool do_guild_who(CHAR_DATA* ch, char* argument)
 {
 	char arg[MAX_INPUT_LENGTH] = "";
 	char buf[MAX_INPUT_LENGTH] = "";
@@ -533,7 +534,7 @@ void do_guild_who(CHAR_DATA* ch, char* argument)
 	}
 }
 
-void do_guild_prospects(CHAR_DATA* ch, char* argument)
+bool do_guild_prospects(CHAR_DATA* ch, char* argument)
 {
 	char buf[MAX_INPUT_LENGTH] = "";
 	MEMBER *applicant = NULL;
@@ -547,7 +548,7 @@ void do_guild_prospects(CHAR_DATA* ch, char* argument)
 	}
 }
 
-void do_guild_approve(CHAR_DATA *ch, char *argument) 
+bool do_guild_approve(CHAR_DATA *ch, char *argument)
 {
 	int guild;
 	CHAR_DATA *leader;
@@ -593,7 +594,7 @@ void do_guild_approve(CHAR_DATA *ch, char *argument)
 	return;
 }
 
-void do_guild_info(CHAR_DATA *ch, char *argument)
+bool do_guild_info(CHAR_DATA *ch, char *argument)
 {
 	char buf[MAX_INPUT_LENGTH] = "";
 	int center_diff;
@@ -624,7 +625,7 @@ void do_guild_info(CHAR_DATA *ch, char *argument)
 	send_to_char("{D:{B-------------------------------------------------{D:{x\n\r", ch);
 }
 
-void do_guild_apply(CHAR_DATA *ch, char *argument)
+bool do_guild_apply(CHAR_DATA *ch, char *argument)
 {
 	int guild;
 	char arg[MAX_INPUT_LENGTH] = "";
@@ -672,7 +673,7 @@ void do_guild_apply(CHAR_DATA *ch, char *argument)
 	}
 }
 
-void do_guild_disband(CHAR_DATA *ch, char *argument)
+bool do_guild_disband(CHAR_DATA *ch, char *argument)
 {
 	DESCRIPTOR_DATA *d;
 	char buf[MAX_INPUT_LENGTH] = "";
@@ -705,7 +706,7 @@ void do_guild_disband(CHAR_DATA *ch, char *argument)
 	ch->guild = GUILD_BOGUS;
 }
 
-void do_guild_expel(CHAR_DATA *ch, char *argument)
+bool do_guild_expel(CHAR_DATA *ch, char *argument)
 {
 	char buf[MAX_INPUT_LENGTH] = "";
 	char name[MAX_INPUT_LENGTH] = "";
@@ -745,7 +746,7 @@ void do_guild_expel(CHAR_DATA *ch, char *argument)
 	reload_guild(ch->guild);
 }
 
-void do_guild_defect(CHAR_DATA *ch, char *argument)
+bool do_guild_defect(CHAR_DATA *ch, char *argument)
 {
 	CHAR_DATA *leader;
 	char buf[MAX_INPUT_LENGTH] = "";
@@ -772,7 +773,7 @@ void do_guild_defect(CHAR_DATA *ch, char *argument)
 	ch->guild = GUILD_BOGUS;
 }
 
-void do_guild_title(CHAR_DATA *ch, char *argument)
+bool do_guild_title(CHAR_DATA *ch, char *argument)
 {
 	char buf[MAX_STRING_LENGTH];
 	char name[MAX_STRING_LENGTH];
@@ -812,7 +813,7 @@ void do_guild_title(CHAR_DATA *ch, char *argument)
 	save_guild(ch->guild);
 }
 
-void do_guild_rank(CHAR_DATA *ch, char *argument)
+bool do_guild_rank(CHAR_DATA *ch, char *argument)
 {
 	char name[MAX_STRING_LENGTH];
 	char rank[MAX_STRING_LENGTH];
@@ -865,7 +866,7 @@ void do_guild_rank(CHAR_DATA *ch, char *argument)
 	}
 }
 
-void do_guild_symbol(CHAR_DATA *ch, char *argument)
+bool do_guild_symbol(CHAR_DATA *ch, char *argument)
 {
 	char symbol[MAX_STRING_LENGTH];
 	argument = preserve_case_one_argument(argument, symbol);
@@ -889,7 +890,7 @@ void do_guild_symbol(CHAR_DATA *ch, char *argument)
 	send_to_char("The guild symbol has been updated.\n\r", ch);
 }
 
-void do_guild_decline(CHAR_DATA *ch, char *argument)
+bool do_guild_decline(CHAR_DATA *ch, char *argument)
 {
 	CHAR_DATA *applicant;
 	char buf[MAX_STRING_LENGTH];
@@ -925,7 +926,7 @@ void do_guild_decline(CHAR_DATA *ch, char *argument)
 	reload_guild(ch->guild);
 }
 
-void do_guild_accept(CHAR_DATA *ch, char *argument)
+bool do_guild_accept(CHAR_DATA *ch, char *argument)
 {
 	char arg[MAX_INPUT_LENGTH];
 	CHAR_DATA *applicant;
