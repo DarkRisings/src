@@ -1498,9 +1498,7 @@ void fread_char( CHAR_DATA *ch, FILE *fp )
 					ch->guild = guild_lookup(ch->cln_apply);
 				}
 
-				// Otherwise they were denied, in both cases free this 
-				// string
-				free_string(ch->cln_apply);
+				ch->cln_apply[0] = '\0';
 			}
 
 			return;

@@ -13,15 +13,34 @@ struct pc_guild_type pc_guild_table[MAX_PC_GUILD];
 int guild_number = 0;
 extern char *center_text args((char *txtstr, int txtnum));
 
+// Command, Syntax, Function, Required Rank, Leader Only, Imm Only, Guild Only
+static const Command cmdTbl[] =
+{
+	{ "list", do_guild_list, 0, FALSE, FALSE, FALSE},
+	{ "establish", do_guild_establish, 0, FALSE, FALSE, FALSE },
+	{ "apply", do_guild_apply, 0, FALSE, FALSE, FALSE },
+	{ "approve", do_guild_approve, 0, FALSE, TRUE, FALSE },
+	{ "info", do_guild_info, 0, FALSE, FALSE, FALSE },
+	{ "accept", do_guild_accept, 2, FALSE, FALSE, TRUE },
+	{ "defect", do_guild_defect, 1, FALSE, FALSE, TRUE },
+	{ "expel", do_guild_expel, 3, FALSE, FALSE, TRUE },
+	{ "disband", do_guild_disband, 0, TRUE, FALSE, FALSE },
+	{ "title", do_guild_title, 0, TRUE, FALSE, FALSE },
+	{ "rank", do_guild_rank, 0, TRUE, FALSE, FALSE },
+	{ "prospects", do_guild_prospects, 2, FALSE, FALSE, FALSE },
+	{ "symbol", do_guild_symbol, 0, TRUE, FALSE, FALSE },
+	{ "decline", do_guild_decline, 2, FALSE, FALSE, FALSE },
+	{ "set", do_guild_list, 0, FALSE, FALSE, FALSE },
+	{ NULL, NULL, NULL, NULL, NULL, NULL },
+};
+
 void do_new_guild(CHAR_DATA* ch, char* argument)
 {
+	Command cmd;
 	char arg1[MAX_INPUT_LENGTH] = "";
 	char arg2[MAX_INPUT_LENGTH] = "";
 	char arg3[MAX_INPUT_LENGTH] = "";
-	argument = preserve_case_one_argument(argument, arg1);
-	argument = preserve_case_one_argument(argument, arg2);
-	argument = preserve_case_one_argument(argument, arg3);
-
+	argument = one_argument(argument, arg1);
 
 	if (IS_NPC(ch)) {
 		send_to_char("NPCs can't perform clan business.\n\r", ch);
@@ -34,37 +53,20 @@ void do_new_guild(CHAR_DATA* ch, char* argument)
 		return;
 	}
 
-	if (!strcmp(arg1, "list")) {
-		do_guild_list(ch);
-	} else if (!strcmp(arg1, "who")) {
-		do_guild_who(ch, arg2);
-	} else if (!strcmp(arg1, "establish")) {
-		do_guild_establish(ch, arg2, arg3);
-	} else if (!strcmp(arg1, "apply")) {
-		do_guild_apply(ch, arg2);
-	} else if (!strcmp(arg1, "approve")) {
-		do_guild_approve(ch, arg2);
-	} else if (!strcmp(arg1, "info")) {
-		do_guild_info(ch);
-	} else if (!strcmp(arg1, "accept")) {
-		do_guild_accept(ch, arg2);
-	} else if (!strcmp(arg1, "defect")) {
-		do_guild_defect(ch);
-	} else if (!strcmp(arg1, "expel")) {
-		do_guild_expel(ch, arg2);
-	} else if (!strcmp(arg1, "disband")) {
-		do_guild_disband(ch);
-	} else if (!strcmp(arg1, "title")) {
-		do_guild_title(ch, arg2, arg3);
-	} else if (!strcmp(arg1, "rank")) {
-		do_guild_rank(ch, arg2, arg3);
-	} else if (!strcmp(arg1, "prospects")) {
-		do_guild_prospects(ch);
-	} else if (!strcmp(arg1, "symbol")) {
-		do_guild_symbol(ch, arg2);
-	} else if (!strcmp(arg1, "decline")) {
-		do_guild_decline(ch, arg2);
+	cmd = cmd_lookup(arg1);
+
+}
+
+Command cmd_lookup(arg)
+{
+	int i;
+	for (i = 0; cmdTbl[i].cmd != NULL; i++) {
+		if (!str_cmp(cmdTbl[i].cmd, arg)) {
+			break;
+		}
 	}
+
+	return cmdTbl[i];
 }
 
 void get_guild_cmd_list(CHAR_DATA *ch)

@@ -31,6 +31,22 @@ struct pc_guild_member
 	int rank;
 };
 
+
+//
+// table for holding all the guild commands
+//
+typedef struct cmd_table_type
+{
+	const char *cmd[15];
+	const char *function[30];
+	const char *syntax[MAX_INPUT_LENGTH];
+	int requiredRank;
+	bool leaderOnly;
+	bool immOnly;
+	bool guildOnly;
+} Command;
+
+
 //
 // Local functions
 //
