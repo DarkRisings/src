@@ -424,7 +424,7 @@ void do_guild_establish(CHAR_DATA* ch, char* argument)
 	// been taken. This covers inactive guilds as well.
 	for (i = 0; i < guild_number + 1; i++) {
 		if (!IS_NULLSTR(pc_guild_table[i].name) && !str_cmp(name, pc_guild_table[i].name)) {
-			send_to_char("That guild name has already been taken."
+			send_to_char("That guild name has already been taken. \n\r"
 						 "It may be inactive and you may be able to claim it. Please see an imm.\n\r", ch);
 			return;
 		}
@@ -506,7 +506,7 @@ void do_guild_establish(CHAR_DATA* ch, char* argument)
 
 	// Flavor text
 	sprintf(buf, "Guild %s has been proposed with you as the leader.\n\r"
-		"Your guild will be inactive until an immportal approves it.\n\r", symbol);
+		"Your guild will be inactive until an immortal approves it.\n\r", symbol);
 	send_to_char(buf, ch);
 }
 
