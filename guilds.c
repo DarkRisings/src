@@ -33,7 +33,7 @@ const struct guild_cmd_type cmdTbl[] =
 	{ "prospects", "guild prospects", do_guild_prospects, 2, FALSE, FALSE, TRUE },
 	{ "symbol", "guild symbol <NEW SYMBOL> | Can only be done BEFORE approval", do_guild_symbol, 0, TRUE, FALSE, TRUE },
 	{ "decline", "guild decline <APPLICANT>", do_guild_decline, 2, FALSE, FALSE, TRUE },
-	{ "leader", "guild leader <GUILD NAME> <NEW LEADER>", do_guild_list, 0, FALSE, TRUE, FALSE },
+	{ "leader", "guild leader <GUILD NAME> <NEW LEADER>", do_guild_leader, 0, FALSE, TRUE, FALSE },
 	{ "deny", "guild deny <GUILD NAME>", do_guild_deny, 0, FALSE, TRUE, FALSE },
 	{ "reload", "guild reload", do_reload_guilds, 0, FALSE, TRUE, FALSE },
 	{ NULL, NULL, NULL, 0, FALSE, FALSE, FALSE },
@@ -590,6 +590,90 @@ void do_guild_who(CHAR_DATA* ch, char* argument)
 		send_to_char(buf, ch);
 		m = m->next;
 	}
+}
+
+void do_guild_leader(CHAR_DATA* ch, char* argument)
+{
+	char gname[MAX_INPUT_LENGTH] = "";
+	char buf[MAX_INPUT_LENGTH] = "";
+	char name[MAX_INPUT_LENGTH] = "";
+	int guild;
+	MEMBER *m = NULL;
+	CHAR_DATA *leader;
+	smash_tilde(argument);
+	argument = one_argument(argument, gname);
+	argument = one_argument(argument, name);
+	guild = guild_lookup(gname);
+	DESCRIPTOR_DATA *d;
+
+	if (IS_NULLSTR(gname)) {
+		send_to_char("You must supply a guild name.\n\r", ch);
+		return;
+	}
+
+	if (IS_NULLSTR(gname)) {
+		send_to_char("You must supply a player name, who is playing.\n\r", ch);
+		return;
+	}
+
+	if (guild == GUILD_BOGUS) {
+		sprintf(buf, "Guild %s not found.", gname);
+		send_to_char(buf, ch);
+		return;
+	}
+
+	if ((leader = get_char_world(ch, name, TRUE)) == NULL) {
+		send_to_char("They aren't here.\n\r", ch);
+		return;
+	}
+
+	if (IS_NPC(leader)) {
+		send_to_char("Not on NPCs.\n\r", ch);
+		return;
+	}
+
+	if (is_guild(leader) && leader->guild != guild) {
+		send_to_char("They're in another guild.\n\r", ch);
+		return;
+	}
+
+	m = pc_guild_table[guild].members;
+	while (m != NULL) {
+		if (m->isLeader) {
+			m->isLeader = FALSE;
+			m->rank = 3;
+			break;
+		}
+	}
+
+	if (is_in_guild(guild, leader->name)) {
+		m = get_member(guild, leader->name);
+		m->isLeader = TRUE;
+	} else {
+		leader->guild = guild;
+		m = new_member_elt();
+		m->isLeader = TRUE;
+		m->levels = ch->level;
+		m->rank = 3;
+		strcpy(m->name, leader->name);
+		strcpy(m->gtitle, "Leader");
+		pc_guild_table[guild].members = append_member(pc_guild_table[guild].members, m);
+	}
+
+	for (d = descriptor_list; d; d = d->next)
+	{
+		if (d->connected == CON_PLAYING)
+		{
+			sprintf(buf, "{G%s{g has taken over leadership of {G%s{g.{x\n\r",
+				leader->name),
+				capitalize(pc_guild_table[guild].name);
+			send_to_char(buf, d->character);
+		}
+	}
+
+	save_guild(guild);
+	reload_guild(guild);
+	
 }
 
 void do_guild_prospects(CHAR_DATA* ch, char* argument)
