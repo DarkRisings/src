@@ -642,6 +642,8 @@ void do_guild_leader(CHAR_DATA* ch, char* argument)
 			m->rank = 3;
 			break;
 		}
+
+		m = m->next;
 	}
 
 	if (is_in_guild(guild, leader->name)) {
@@ -672,7 +674,6 @@ void do_guild_leader(CHAR_DATA* ch, char* argument)
 
 	save_guild(guild);
 	reload_guild(guild);
-	
 }
 
 void do_guild_prospects(CHAR_DATA* ch, char* argument)
@@ -1069,6 +1070,7 @@ void do_guild_rank(CHAR_DATA *ch, char *argument)
 		t->rank = 3;
 
 		save_guild(ch->guild);
+		reload_guild(ch->guild);
 	} else {
 		send_to_char("Invalid argument.\n\r", ch);
 	}
