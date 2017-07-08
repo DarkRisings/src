@@ -17,7 +17,7 @@ struct clanNode
   struct clanNode* nextClan;
 };
 
-typedef bool (*ClanSubcommandHandler)( CHAR_DATA* ch, CHAR_DATA* victim, char* argument );
+typedef void (*ClanSubcommandHandler)( CHAR_DATA* ch, CHAR_DATA* victim, char* argument );
 
 typedef struct
 {
