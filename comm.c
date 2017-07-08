@@ -550,7 +550,7 @@ void init_descriptor( int control )
 
     dnew->descriptor	= desc;
     dnew->connected	= CON_GET_NAME;
-    dnew->ansi          = FALSE;
+    dnew->ansi          = TRUE;
     dnew->showstr_head	= NULL;
     dnew->showstr_point = NULL;
     dnew->outsize	= 2000;
@@ -1690,27 +1690,12 @@ void nanny( DESCRIPTOR_DATA *d, char *argument )
 	{
           if ( !global_config_aprilfools ) {
 	  /* Old player */
-	  write_to_buffer( d, "    |                                                              |\n\r", 0);
-	  write_to_buffer( d, "    | This name is already in my record books, the dark figure     |\n\r", 0);
-	  write_to_buffer( d, "    | says, to access thy mortal body thou must provide me with a  |\n\r", 0);
-	  write_to_buffer( d, "    | password.                                                    |\n\r", 0);
-	  write_to_buffer( d, "    |                                                              |\n\r", 0);
-	  write_to_buffer( d, "    | What is thy password soul? ", 0 );
+	  write_to_buffer( d, "Password: ", 0 );
 	  write_to_buffer( d, echo_off_str, 0 );
           }
           else
           {
-	  write_to_buffer(d,"    |                                                              |\n\r", 0);
-	  write_to_buffer(d,"    | The name thee wishes to use is not in my records. Thou must  |\n\r", 0);
-	  write_to_buffer(d,"    | create thyself a mortal body. Before thou dost continues,    |\n\r", 0);
-	  write_to_buffer(d,"    | thou must consider thy name. Thy name must be one that is    |\n\r", 0);
-	  write_to_buffer(d,"    | relevant to the time in which the world lives within. Thou   |\n\r", 0);
-	  write_to_buffer(d,"    | must not have a profain, nor a name that refers to an action.|\n\r", 0);
-	  write_to_buffer(d,"    | Thou must consider this wisely, for the immortals of the     |\n\r", 0);
-	  write_to_buffer(d,"    | land must approve thee for continued usage of thy name.      |\n\r", 0);
-	  write_to_buffer(d,"    |                                                              |\n\r", 0);
-	  write_to_buffer(d,"    |                                                              |\n\r", 0);
-	  sprintf (buf,"    | Is this the name thou wishes to use?, %s (Y/N)? ", argument );
+	  sprintf (buf,"Is this the name you wish to use, %s (Y/N)? ", argument );
 	  write_to_buffer( d, buf, 0 );
 	  write_to_buffer( d, echo_off_str, 0 );
           }
@@ -1757,18 +1742,7 @@ void nanny( DESCRIPTOR_DATA *d, char *argument )
 	      close_socket(d);
 	      return;
 	    }
-	
-	  write_to_buffer(d,"    |                                                              |\n\r", 0);
-	  write_to_buffer(d,"    | The name thee wishes to use is not in my records. Thou must  |\n\r", 0);
-	  write_to_buffer(d,"    | create thyself a mortal body. Before thou dost continues,    |\n\r", 0);
-	  write_to_buffer(d,"    | thou must consider thy name. Thy name must be one that is    |\n\r", 0);
-	  write_to_buffer(d,"    | relevant to the time in which the world lives within. Thou   |\n\r", 0);
-	  write_to_buffer(d,"    | must not have a profain, nor a name that refers to an action.|\n\r", 0);
-	  write_to_buffer(d,"    | Thou must consider this wisely, for the immortals of the     |\n\r", 0);
-	  write_to_buffer(d,"    | land must approve thee for continued usage of thy name.      |\n\r", 0);
-	  write_to_buffer(d,"    |                                                              |\n\r", 0);
-	  write_to_buffer(d,"    |                                                              |\n\r", 0);
-	  sprintf (buf,"    | Is this the name thou wishes to use?, %s (Y/N)? ", argument );
+	  sprintf (buf,"Is this the name you wish to use, %s (Y/N)? ", argument );
 	  write_to_buffer( d, buf, 0 );
 	  d->connected = CON_CONFIRM_NEW_NAME;
 	  return;
@@ -1884,39 +1858,9 @@ void nanny( DESCRIPTOR_DATA *d, char *argument )
         send_to_char("</xch_mudtext><img xch_mode=html>",ch);
         send_to_char(pueblo_buf,ch);
         send_to_char("<br><img xch_mode=text>",ch);
-      } else send_to_char("    |                                                              |\n\r", ch);
-
-      if ( IS_IMMORTAL(ch) )
-	{
-	  send_to_char("    | The dark figure bows before you and says, '{gWelcome           {x|\n\r", ch);
-	  sprintf(buf,"    | {g%14s, thine immortal station awaits thee.{x'         |\n\r",ch->name);
-	  send_to_char(buf,ch);
-	  send_to_char("    |                                                              |\n\r", ch);
-	  send_to_char("    | You feel the universe begin to swirl as your senses are      |\n\r", ch);
-	  send_to_char("    | bombarded by the swirling vortex surrounding you. As your    |\n\r", ch);
-	  send_to_char("    | soul falls down to the realm of mortal men you think you can |\n\r", ch);
-	  send_to_char("    | make out what appears to be a sign.............              |\n\r",ch);
-	  send_to_char("\n\r", ch);
-	  send_to_char("\n\r", ch);
-	  do_help(ch,"greeting");
+      } 
+	  do_help(ch, "greeting");
 	  d->connected = CON_READ_GREETING;
- 	}
-      else
-        {
-          send_to_char("    | The dark figure fades from view and a voice booms '{gWelcome {x  |\n\r", ch); 
-          sprintf(buf,"    | {g%14s, thine adventure awaits for thee.{x'             |\n\r",ch->name);
-          send_to_char(buf,ch);
-          send_to_char("    |                                                               |\n\r", ch);
-          send_to_char("    | You feel the universe begin to swirl as your senses are       |\n\r", ch);
-          send_to_char("    | bombarded by the swirling vortex surrounding you. As your     |\n\r", ch);
-          send_to_char("    | soul falls down to the realm of mortal men you think you can  |\n\r", ch);
-          send_to_char("    | make out what appears to be a sign.............               |\n\r", ch);
-          send_to_char("\n\r", ch);
-          send_to_char("\n\r", ch);
-	  do_help(ch,"greeting");
-	  d->connected = CON_READ_GREETING;
-        }
-
       break;
 
       /* RT code for breaking link */
@@ -1972,10 +1916,7 @@ void nanny( DESCRIPTOR_DATA *d, char *argument )
       switch ( *argument )
 	{
 	case 'y': case 'Y':
-	  write_to_buffer( d, "    |                                                              |\n\r", 0);
-	  write_to_buffer( d, "    | Thou must have a password to access thy mortal body.         |\n\r", 0);
-	  write_to_buffer( d, "    |                                                              |\n\r", 0);
-	  sprintf( buf, "    | What is the password thou wishes to use for %s? %s",
+	  sprintf( buf, "Give me a password for %s: %s",
 		   ch->name, echo_off_str );
 	  SET_BIT(ch->act_bits,PLR_NEWBIE);
 	  write_to_buffer( d, buf, 0 );
@@ -1985,7 +1926,7 @@ void nanny( DESCRIPTOR_DATA *d, char *argument )
 	  break;
 
 	case 'n': case 'N':
-	  write_to_buffer( d, "Ok, what IS thy name then? ", 0 );
+	  write_to_buffer( d, "Ok, what IS your name then? ", 0 );
 	  free_char( d->character );
 	  d->character = NULL;
 	  d->connected = CON_GET_NAME;
@@ -2004,8 +1945,8 @@ void nanny( DESCRIPTOR_DATA *d, char *argument )
 
       if ( strlen(argument) < 5 )
 	{
-	  write_to_buffer( d,"    | Thy password must be at least 5 characters long.             |\n\r", 0);
-	  write_to_buffer( d,"    | What is thy Password? ", 0 );
+	  write_to_buffer( d,"Password must be at least 5 characters long.\n\r", 0);
+	  write_to_buffer( d,"What is your Password? ", 0 );
 	  return;
 	}
 
@@ -2014,16 +1955,15 @@ void nanny( DESCRIPTOR_DATA *d, char *argument )
 	{
 	  if ( *p == '~' )
 	    {
-	      write_to_buffer( d,"    | Thy password is not acceptable choose again.                  |\n\r", 0);
-	      write_to_buffer( d,"    | What is thy Password: ", 0 );
+	      write_to_buffer(d, "Password not secure, please choose again.\n\r", 0);
+		  write_to_buffer(d, "What is your Password? ", 0);
 	      return;
 	    }
 	}
 
       free_string( ch->pcdata->pwd );
       ch->pcdata->pwd	= str_dup( pwdnew );
-      write_to_buffer( d, "    |                                                              |\n\r", 0);
-      write_to_buffer( d, "    | Please retype thy password: ", 0 );
+      write_to_buffer( d, "Please retype password: ", 0 );
       d->connected = CON_CONFIRM_NEW_PASSWORD;
       break;
 
@@ -2034,78 +1974,34 @@ void nanny( DESCRIPTOR_DATA *d, char *argument )
 
       if ( strcmp( crypt( argument, ch->pcdata->pwd ), ch->pcdata->pwd ) )
 	{
-	  write_to_buffer( d, "    |                                                              |\n\r", 0);
-	  write_to_buffer( d, "    | Thou's passwords do not match, please try again.             |\n\r", 0);
-	  write_to_buffer( d, "    | Retype thy password:",0 );
+	  write_to_buffer( d, "Password mismatch. Please try again. \n\r", 0);
+	  write_to_buffer( d, "Password:",0 );
 	  d->connected = CON_GET_NEW_PASSWORD;
 	  return;
 	}
 
       write_to_buffer( d, echo_on_str, 0 );
-      write_to_buffer( d, "    |                                                              |\n\r", 0);
-      write_to_buffer( d, "    | Dost thou wish to end thy colorblindness soul? (Y/N)  ",0);
-      d->connected = CON_ANSI;
-      break;
+      write_to_buffer( d, "Please choose a race. Type {mhelp race{x and {mhelp racestat{x for more information.\n\r", 0);
+      write_to_buffer( d, "Select a race from the list below: \n\r",0);
+	  write_to_buffer(d, "\n\r", 0);
+	  for (race = 1; race_table[race].name != NULL; race++)
+	  {
+		  if (race_table[race].pc_race &&
+			  race_table[race].visible &&
+			  !race_table[race].remort_race)
+		  {
+			  write_to_buffer(d, race_table[race].name, 0);
+			  write_to_buffer(d, " ", 1);
+		  }
+	  }
+	  write_to_buffer(d, "\n\r", 0);
+	  write_to_buffer(d, "\n\r", 0);
 
-    case CON_ANSI:
-      switch ( *argument )
-        {
-        case 'y': case 'Y':
-	  SET_BIT(ch->act_bits, PLR_COLOUR);
-	  d->connected = CON_GET_NEW_RACE;
-	  break;
- 
-        case 'n': case 'N':
-	  break;
- 
-        default:
-	  write_to_buffer( d, "Please type Yes or No? ", 0 );
-	  break;
-        }
- 
-      write_to_buffer( d, echo_on_str, 0 );
-      write_to_buffer( d, "    |                                                              |\n\r", 0);
-      write_to_buffer( d, "    | The dark figure leads you down a path towards what appears   |\n\r",0);
-      write_to_buffer( d, "    | to be a small building floating in the void. The Dark Figure |\n\r",0);
-      write_to_buffer( d, "    | opens the door to the building and leads you inside. As you  |\n\r",0);
-      write_to_buffer( d, "    | look around you see hanging on the walls what appears to be  |\n\r",0);
-      write_to_buffer( d, "    | lifeless bodies of different kinds. The Dark Figure turns to |\n\r",0);
-      write_to_buffer( d, "    | you and begins to speak to you again.                        |\n\r",0);
-      write_to_buffer( d, "    |                                                              |\n\r", 0);
-      write_to_buffer( d, "    |                                                              |\n\r", 0);
-      sprintf(buf,"    | {g'There are numerous races available to thee, %-14s  {x|\n\r",ch->name);
-      send_to_char(buf,ch);
-      sprintf(buf,"    | {gTo aid thee in thy selection thou can type help {Crace{g and     {x|\n\r");
-      send_to_char(buf,ch);
-      sprintf(buf,"    | {ghelp {Cracestat{g for more information on thy selected race.'    {x|\n\r");
-      send_to_char(buf,ch);
-      write_to_buffer( d, "\n\r", 0);
-      write_to_buffer( d, "\n\r", 0);
-      write_to_buffer( d, "\n\r", 0);
-      sprintf(buf,"   {GPlease select a race suitable to thy name from the following list:{c\n\r");
-      send_to_char(buf,ch);
-      write_to_buffer(d,"\n\r", 0);
-      write_to_buffer( d, " [",0 );
-      for ( race = 1; race_table[race].name != NULL;  race++ )
-        {
-	  if( race_table[ race ].pc_race &&
-	      race_table[ race ].visible &&
-	      !race_table[ race ].remort_race )
-	    {
-	      write_to_buffer(d,race_table[race].name,0);
-	      write_to_buffer(d," ",1);
-	    }
-        }
-      write_to_buffer( d, "]\n\r",0 );
-      write_to_buffer( d, "\n\r", 0);
-      write_to_buffer( d, "\n\r", 0);
-      sprintf(buf,"   {GWhat race dost thou wish to use?{x ");
-      send_to_char(buf,ch);
+	  sprintf(buf, "What is your race?");
+	  send_to_char(buf, ch);
       d->connected = CON_GET_NEW_RACE;
       break;
- 
-      break;
- 
+
     case CON_GET_NEW_RACE:
       one_argument(argument,arg);
 
@@ -2117,7 +2013,7 @@ void nanny( DESCRIPTOR_DATA *d, char *argument )
 	  else
 	    do_help(ch,argument);
 	  write_to_buffer(d,"\n\r", 0);
-	  sprintf(buf,"   {GWhat race dost thou wish to use?{x ");
+	  sprintf(buf,"{GWhat is your race?{x ");
 	  send_to_char(buf,ch);
 	  break;
   	}
@@ -2127,9 +2023,9 @@ void nanny( DESCRIPTOR_DATA *d, char *argument )
       if (race == 0 || !race_table[race].pc_race || race_table[race].remort_race)
 	{
 	  write_to_buffer(d,"\n\r", 0);
-	  sprintf(buf,"   {GThat is not race that lives amongst this world.{x\n\r");
+	  sprintf(buf,"That is not a valid race.\n\r");
 	  send_to_char(buf,ch);
-	  sprintf(buf,"   {GThese are the races available to thee:{C\n\r");
+	  sprintf(buf,"Select a race from the list below: \n\r");
 	  send_to_char(buf,ch);
 	  write_to_buffer(d,"\n\r", 0);
 	  for ( race = 1; race_table[race].name != NULL; race++ )
@@ -2145,7 +2041,7 @@ void nanny( DESCRIPTOR_DATA *d, char *argument )
 	  write_to_buffer(d,"\n\r", 0);
 	  write_to_buffer(d,"\n\r", 0);
 
-	  sprintf(buf,"   {GWhat race dost thou wish to use? {x");
+	  sprintf(buf,"What is your race?");
 	  send_to_char(buf,ch);
 	  break;
 	}
@@ -2179,19 +2075,10 @@ void nanny( DESCRIPTOR_DATA *d, char *argument )
       ch->pcdata->points = pc_race_table[race].points;
       ch->size = pc_race_table[race].size;
 
-      write_to_buffer(d,"\n\r", 0);
-      write_to_buffer(d,"\n\r", 0);
-      sprintf( buf, "   {GThou must choose %s, whether thou art male or if thou art female.{x\n\r",ch->name);
-      send_to_char(buf,ch);
-      sprintf( buf, "   {GIf thou art one of the lichnee, thou mayest choose to be neither.{x" );
-      send_to_char(buf,ch);
-      write_to_buffer(d,"\n\r", 0);
-      write_to_buffer(d,"\n\r", 0);
-
       if( ch->race == race_lookup( "lich" ) )
-	sprintf(buf,"   {GWhat is thy sex, %s (M/F/N)?{x ", ch->name );
+	sprintf(buf,"What is your sex (M/F/N)?");
       else
-	sprintf(buf,"   {GWhat is thy sex, %s (M/F)?{x ", ch->name );
+	sprintf(buf,"What is your sex (M/F)?");
 
       send_to_char(buf,ch );
       d->connected = CON_GET_NEW_SEX;
@@ -2211,10 +2098,10 @@ void nanny( DESCRIPTOR_DATA *d, char *argument )
 	      }
 	    else
 	      {
-		sprintf(buf, "   {GThat's not a sex, %s\n\r{x", ch->name);
+		sprintf(buf, "That's not a sex.\n\r");
 		send_to_char( buf, ch );
 		write_to_buffer( d, "\n\r", 0 );
-		sprintf(buf, "   {GWhat IS your sex?{x" );
+		sprintf(buf, "What IS your sex?" );
 		send_to_char( buf, ch );
 		return;
 	      }
@@ -2228,36 +2115,17 @@ void nanny( DESCRIPTOR_DATA *d, char *argument )
 	  ch->pcdata->true_sex = SEX_FEMALE;
 	  break;
 	default:
-	  sprintf(buf, "   {GThat's not a sex, %s\n\r{x", ch->name);	
+		sprintf(buf, "That's not a sex.\n\r");
 	  send_to_char(buf,ch);
 	  write_to_buffer(d,"\n\r", 0);
-	  sprintf(buf, "   {GWhat IS your sex %s? {x", ch->name );
+	  sprintf(buf, "What IS your sex?");
 	  send_to_char(buf,ch);
 	  return;
 	}
 
       write_to_buffer(d,"\n\r", 0);
       write_to_buffer(d,"\n\r", 0);
-      write_to_buffer(d,"    | The Dark Figure leads you away from the house floating       |\n\r", 0);
-      write_to_buffer(d,"    | in the void down another path leading to a small arena       |\n\r", 0);
-      write_to_buffer(d,"    | floating freely in space. As you look around you notice      |\n\r", 0);
-      write_to_buffer(d,"    | other ethereal beings practicing weaponry or reciting        |\n\r", 0);
-      write_to_buffer(d,"    | arcane words from books spread about them. He turns to you   |\n\r", 0);
-      write_to_buffer(d,"    | and speaks to you again.                                     |\n\r", 0);
-      write_to_buffer(d,"    |                                                              |\n\r", 0);
-      sprintf( buf, "    | {g'Thou must choose now %13s, what trade Thou wishes  {x|\n\r",ch->name);
-      send_to_char(buf,ch);
-      sprintf( buf, "    | {gto use upon the mortal realm. There are several options      {x|\n\r");
-      send_to_char(buf,ch);
-      sprintf( buf, "    | {gavailable to thee, %13s. To help thee choose, thou  {x|\n\r",ch->name);
-      send_to_char(buf,ch);
-      sprintf( buf, "    | {gcan type help {Cclass {gor help {Cclass2{g for more information to   {x|\n\r");
-      send_to_char(buf,ch);
-      sprintf( buf, "    | {gaid thee.'                                                   {x|\n\r");
-      send_to_char(buf,ch);
-      write_to_buffer(d,"\n\r", 0);
-      write_to_buffer(d,"\n\r", 0);
-      sprintf(buf,"   {gPlease choose thy trade, %s, from the following list:{c\n\r",ch->name);
+      sprintf(buf,"Please choose a class from the following list:\n\r");
       send_to_char(buf,ch);
       write_to_buffer(d,"\n\r", 0);
       strcpy( buf, " [" );
@@ -2271,7 +2139,7 @@ void nanny( DESCRIPTOR_DATA *d, char *argument )
       strcat( buf, "] \n\r" );
       write_to_buffer( d, buf, 0 );
       write_to_buffer(d,"\n\r", 0);
-      sprintf(buf,"   {gWhat is thy trade %s? {x", ch->name);
+      sprintf(buf,"What is your class?");
       send_to_char(buf,ch);
       d->connected = CON_GET_NEW_CLASS;
       break;
@@ -2290,7 +2158,7 @@ void nanny( DESCRIPTOR_DATA *d, char *argument )
 	    do_help(ch,argument);
 
 	  write_to_buffer(d,"\n\r", 0);
-	  sprintf(buf,"   {GWhat is thy trade %s? {x", ch->name);
+	  sprintf(buf, "What is your class?");
 	  send_to_char(buf,ch);
 	  break;
   	}
@@ -2299,7 +2167,7 @@ void nanny( DESCRIPTOR_DATA *d, char *argument )
 
       if ( iClass == -1 /* || (iClass == class_lookup("avatar")) */ )
 	{
-	  sprintf( buf, "   {gThat's not a trade %s.\n\r   What IS thy trade, %s? {x",ch->name,ch->name);
+	  sprintf( buf, "That's not a class.\n\r   What IS your class?");
 	  send_to_char(buf,ch);
 	  return;
 	}
@@ -2318,44 +2186,28 @@ void nanny( DESCRIPTOR_DATA *d, char *argument )
       ch->pcdata->learned[gsn_wands] = MIN_SKILL_PCT;
       ch->pcdata->learned[gsn_scrolls] = MIN_SKILL_PCT;
       ch->pcdata->learned[gsn_staves] = MIN_SKILL_PCT;
-      write_to_buffer(d,"    |                                                              |\n\r", 0);
-      write_to_buffer(d,"    |                                                              |\n\r", 0);
-      write_to_buffer(d,"    | The Dark Figure leads you down a small path towards what     |\n\r", 0);
-      write_to_buffer(d,"    | appears to be a small temple. He opens the door and leads    |\n\r", 0);
-      write_to_buffer(d,"    | you inside. As you enter the small temple you see three      |\n\r", 0);
-      write_to_buffer(d,"    | large tapestries, each depicting a grand scene involving     |\n\r", 0);
-      write_to_buffer(d,"    | the different Gods of the realm.                             |\n\r", 0);
-      write_to_buffer(d,"    |                                                              |\n\r", 0);
-      sprintf(buf, "    | {g'Thou must now decide which of the three gods of the         {x|\n\r");
-      send_to_char(buf,ch);
-      sprintf(buf, "    | {grealm thou wishes to worship. If thou doest not know         {x|\n\r");
-      send_to_char(buf,ch);
-      sprintf(buf, "    | {gwhich god to choose thou can type help of each of the        {x|\n\r");
-      send_to_char(buf,ch);
-      sprintf(buf, "    | {ggods names.                                                  {x|\n\r");
-      send_to_char(buf,ch);
-      write_to_buffer(d,"    |                                                              |\n\r", 0);
-      sprintf(buf, "     {g'Thy choices are as follows:                                 {c\n\r");
+
+      sprintf(buf, "Please choose a diety: \n\r");
       send_to_char(buf,ch);
       send_to_char("\n\r",ch);        
       send_to_char("\n\r",ch);        
 
       if (ch->race == race_lookup("lich"))
       {
-	  send_to_char("     {c[Syrin]",ch);
+	  send_to_char("[Syrin]",ch);
       }
       else if (ch->class == class_lookup("templar"))
       {
-          send_to_char("     {c[Rhian Tyrin Syrin]", ch );
+          send_to_char("[Rhian Tyrin Syrin]", ch );
       }
       else
 	{
-	  send_to_char("     {c[Rhian Tyrin Syrin None]",ch);
+	  send_to_char("[Rhian Tyrin Syrin None]",ch);
 	}
 
       write_to_buffer(d,"\n\r", 0);
       write_to_buffer(d,"\n\r", 0);
-      sprintf(buf, "   {gWho do you choose to worship, %s?{x ",ch->name);
+      sprintf(buf, "Who do you choose to worship?");
       send_to_char(buf,ch);
       d->connected = CON_GET_GOD;
       break;
@@ -2371,7 +2223,7 @@ void nanny( DESCRIPTOR_DATA *d, char *argument )
 	    do_help(ch,"gods");
 	  else
 	    do_help(ch,argument);
-	  sprintf(buf, "   {gWho do you choose to worship, %s?{x ",ch->name);
+	  sprintf(buf, "Who do you choose to worship?");
 	  send_to_char(buf,ch);
 	  break;
         }
@@ -2382,47 +2234,24 @@ void nanny( DESCRIPTOR_DATA *d, char *argument )
       ||  ( ch->race == race_lookup( "lich" ) && god != 3 )
       ||  ( god == 0 && ch->class == class_lookup( "templar" ) ))
       {
-          sprintf(buf, "   {gYou cannot worship that deity, %s{x\n\r",ch->name);
+          sprintf(buf, "You cannot worship that deity.\n\r");
           send_to_char(buf,ch);
 	  
 	  if (ch->race == race_lookup("lich"))
-	      send_to_char("     {c[Syrin]\n\r",ch);
+	      send_to_char("[Syrin]\n\r",ch);
           else if (ch->class == class_lookup("templar"))
-              send_to_char("     {c[Rhian Tyrin Syrin]", ch );
+              send_to_char("[Rhian Tyrin Syrin]", ch );
 	  else
-	      send_to_char("     {c[Rhian Tyrin Syrin None]\n\r",ch);
+	      send_to_char("[Rhian Tyrin Syrin None]\n\r",ch);
         
 	  write_to_buffer(d,"\n\r",0);
-	  sprintf(buf, "   {gWho do you choose to worship, %s?{x ",ch->name);
+	  sprintf(buf, "Who do you choose to worship?{x ");
 	  send_to_char(buf,ch);
 	  break;
       } 
         
       ch->pcdata->god = god;
- 
-      write_to_buffer(d,"    |                                                              |\n\r", 0);
-      write_to_buffer(d,"    |                                                              |\n\r", 0);
-      write_to_buffer(d,"    | The Dark Figure leads you to the center of the arena and     |\n\r",0);
-      write_to_buffer(d,"    | waves his hands in the air. Around you books and weaponry    |\n\r",0);
-      write_to_buffer(d,"    | appear. The Dark Figure turns and begins to speak to you     |\n\r",0);
-      write_to_buffer(d,"    | again.                                                       |\n\r",0);
-      write_to_buffer(d,"    |                                                              |\n\r", 0);
-      sprintf(buf, "    | {g'Thou must decide now if thou wishes to gain specific        {x|\n\r");
-      send_to_char(buf,ch);
-      sprintf(buf, "    | {gknowledge in thy trade, or if thy wants to only gain the     {x|\n\r");
-      send_to_char(buf,ch);
-      sprintf(buf, "    | {gbasic knowledge for thy trade. Those who know not the realm  {x|\n\r");
-      send_to_char(buf,ch);
-      sprintf(buf, "    | {gof Rhia should seriously consider learning only the basics   {x|\n\r");
-      send_to_char(buf,ch);
-      sprintf(buf, "    | {gand save customizing for another day.  The basic skills and  {x|\n\r");
-      send_to_char(buf,ch);
-      sprintf(buf, "    | {gspells provided are sufficient for almost any task.          {x|\n\r");
-      send_to_char(buf,ch);
-      write_to_buffer(d,"    |                                                              |\n\r", 0);
-      write_to_buffer(d,"\n\r",0);
-/*      sprintf(buf, "   {gDo you wish to customize thy knowledge?  New players should not.{x (Y/N) ",ch->name);*/
-      send_to_char("   {gDo you wish to customize thy knowledge?  New players should not.{x (Y/N) ",ch);
+      send_to_char("Do you wish to customize?  New players should not. (Y/N) ",ch);
       d->connected = CON_DEFAULT_CHOICE;
       break;
 
@@ -2440,7 +2269,7 @@ void nanny( DESCRIPTOR_DATA *d, char *argument )
 	  sprintf(buf,"{W");
 	  send_to_char(buf,ch);
 	  list_group_costs(ch);
-	  sprintf(buf,"{gYou already have the following skills:{x\n\r");
+	  sprintf(buf,"You already have the following skills:\n\r");
 	  send_to_char(buf,ch);
 	  sprintf(buf,"{m");
 	  send_to_char(buf,ch);
@@ -2453,21 +2282,7 @@ void nanny( DESCRIPTOR_DATA *d, char *argument )
         case 'n': case 'N': 
 	  group_add(ch,class_table[ch->class].default_group,TRUE);
 	  write_to_buffer( d, "\n\r", 2 );
-	  write_to_buffer(d,"    |                                                              |\n\r",0);
-	  write_to_buffer(d,"    | The Dark Figure leads you away from the arena to a small hut |\n\r",0);
-	  write_to_buffer(d,"    | floating in the void of space. He opens the door and leads   |\n\r",0);
-	  write_to_buffer(d,"    | you inside. As you look around the hut you notice the walls  |\n\r",0);
-	  write_to_buffer(d,"    | are lined with many different types of weaponry. The Dark    |\n\r",0);
-	  write_to_buffer(d,"    | Figure turns to you and begins to speak                      |\n\r",0);
-	  write_to_buffer(d,"    |                                                              |\n\r",0);
-	  sprintf( buf, "    | {gThy task is almost complete soul. Thou must choose now{x       |\n\r");
-	  send_to_char(buf,ch); 
-	  sprintf( buf, "    |{g what weapon thy wishes to use upon entering the mortal    {x   |\n\r");
-	  send_to_char(buf,ch); 
-	  sprintf( buf, "    | {grealm.{x                                                       |\n\r");
-	  send_to_char(buf,ch); 
-	  send_to_char("\n\r",ch);
-	  sprintf( buf, "   {gPlease pick a weapon from the following choices:{c\n\r\n\r");
+	  sprintf( buf, "Please pick a weapon from the following choices:{c\n\r\n\r");
 	  send_to_char(buf,ch);
 
 	  buf[0] = '\0';
@@ -2484,7 +2299,7 @@ void nanny( DESCRIPTOR_DATA *d, char *argument )
 	  d->connected = CON_PICK_WEAPON;
 	  break;
         default:
-	  sprintf( buf, "   {gPlease answer (Y/N)?{x ");
+	  sprintf( buf, "Please answer (Y/N)? ");
 	  send_to_char(buf,ch); 
 	  return;
         }
@@ -2495,7 +2310,7 @@ void nanny( DESCRIPTOR_DATA *d, char *argument )
       weapon = weapon_lookup(argument);
       if (weapon == -1 || ch->pcdata->learned[*weapon_table[weapon].gsn] <= 0)
 	{
-	  sprintf(buf,"   {gThat's not a valid selection. Thy choices are:{c\n\r");
+	  sprintf(buf,"That's not a valid selection. Thy choices are:{c\n\r");
 	  send_to_char(buf,ch);
 	  buf[0] = '\0';
 	  for ( i = 0; weapon_table[i].name != NULL; i++)
@@ -2505,7 +2320,7 @@ void nanny( DESCRIPTOR_DATA *d, char *argument )
 		write_to_buffer(d," ",1);
 	      }
 	  send_to_char("{g\n\r",ch);
-	  strcat(buf,"\n\r   What is Thy choice? ");
+	  strcat(buf,"\n\rWhat is Thy choice? ");
 	  write_to_buffer(d,buf,0);
 	  return;
 	}
@@ -2532,31 +2347,16 @@ void nanny( DESCRIPTOR_DATA *d, char *argument )
       send_to_char("\n\r",ch);
       if (!str_cmp(argument,"done"))
        	{
-	  sprintf(buf,"{g     Thou hast used {m%d {gcreation points.{x\n\r",ch->pcdata->points);
+	  sprintf(buf,"{gThou hast used {m%d {gcreation points.{x\n\r",ch->pcdata->points);
 	  send_to_char(buf,ch);
-	  sprintf(buf,"{g     Thou dost need {m%d {gexperience points to level per level.{x\n\r",
+	  sprintf(buf,"{gThou dost need {m%d {gexperience points to level per level.{x\n\r",
 		  exp_per_level(ch,ch->gen_data->points_chosen));
 	  if (ch->pcdata->points < 40)
 	    ch->train = (40 - ch->pcdata->points + 1) / 2;
 	  free_gen_data(ch->gen_data);
 	  ch->gen_data = NULL;
 	  send_to_char(buf,ch);
-	  write_to_buffer( d, "\n\r", 2 );
-	  write_to_buffer(d,"    |                                                              |\n\r",0);
-	  write_to_buffer(d,"    | The Dark Figure leads you away from the arena to a small hut |\n\r",0);
-	  write_to_buffer(d,"    | floating in the void of space. He opens the door and leads   |\n\r",0);
-	  write_to_buffer(d,"    | you inside. As you look around the hut you notice the walls  |\n\r",0);
-	  write_to_buffer(d,"    | are lined with many different types of weaponry. The Dark    |\n\r",0);
-	  write_to_buffer(d,"    | Figure turns to you and begins to speak.                     |\n\r",0);
-	  write_to_buffer(d,"    |                                                              |\n\r",0);
-	  sprintf( buf, "    | {gThy task is almost complete soul. Thou must choose now{x       |\n\r");
-	  send_to_char(buf,ch); 
-	  sprintf( buf, "    |{g what weapon thy wishes to use upon entering the mortal    {x   |\n\r");
-	  send_to_char(buf,ch); 
-	  sprintf( buf, "    | {grealm.{x                                                       |\n\r");
-	  send_to_char(buf,ch); 
-	  send_to_char("\n\r",ch);
-	  sprintf( buf, "   {gPlease pick a weapon from the following choices:{c\n\r");
+	  sprintf( buf, "{gPlease pick a weapon from the following choices:{c\n\r");
 	  send_to_char(buf,ch);
 
 	  buf[0] = '\0';
@@ -2568,7 +2368,7 @@ void nanny( DESCRIPTOR_DATA *d, char *argument )
 		write_to_buffer(d," ",1);
 	      }
 	  send_to_char("{g\n\r",ch);
-	  strcat(buf,"\n\r   What is Thy choice? ");
+	  strcat(buf,"\n\rWhat is Thy choice? ");
 	  write_to_buffer(d,buf,0);
 	  d->connected = CON_PICK_WEAPON;
 	  break;
@@ -2610,42 +2410,7 @@ void nanny( DESCRIPTOR_DATA *d, char *argument )
         }
 
     case CON_READ_PREGREETING:
-      send_to_char("    |                                                               |\n\r",ch);
-      send_to_char("    | The Dark Figure leads you away from the hut down another      |\n\r",ch);
-      send_to_char("    | path. You follow him for what seems like an eternity when     |\n\r",ch);
-      send_to_char("    | suddenly you come to a dead end. The Dark Figure turns to     |\n\r",ch);
-      send_to_char("    | you and begins to speak.                                      |\n\r",ch);
-      send_to_char("    |                                                               |\n\r",ch);
-      sprintf(buf,"    |{g 'Thou art ready to enter the realm of mortal men %12s.{x|\n\r", ch->name);
-      send_to_char(buf,ch);
-      send_to_char("    | {gTo aid thee in thy adventure in the realm, Thou can read      {x|\n\r",ch);
-      send_to_char("    | {gseveral tomes after entering. The most useful of these tomes  {x|\n\r",ch);
-      send_to_char("    | {gare, {chelp newbie, help newbie2, help etiquette, help rules,  {x|\n\r",ch);
-      send_to_char("    | {gand {rhelp getting started. {gThese are my last words to thee     {x|\n\r",ch);
-      send_to_char("    | {gsoul, please consider them wisely for the IMMORTALS of the    {x|\n\r",ch);
-      send_to_char("    | {grealm will expect thee to know thy content.                   {x|\n\r",ch);
-      send_to_char("    |                                                               {x|\n\r",ch);
-      send_to_char("    | The Dark Figure fades from view and a voice booms '{gWelcome {x   |\n\r",ch);
-      sprintf(buf,"    | {g%14s, thine adventure awaits for thee.{x'             |\n\r",ch->name);
-      send_to_char(buf,ch);
-      send_to_char("    |                                                               |\n\r", ch);
-      send_to_char("    | You feel the universe begin to swirl as your senses are       |\n\r", ch);
-      send_to_char("    | {gseveral tomes after entering. The most useful of these tomes  {x|\n\r",ch);
-      send_to_char("    | {gare, {chelp newbie, help newbie2, help etiquette, help rules,  {x|\n\r",ch);
-      send_to_char("    | {gand {rhelp getting started. {gThese are my last words to thee     {x|\n\r",ch);
-      send_to_char("    | {gsoul, please consider them wisely for the IMMORTALS of the    {x|\n\r",ch);
-      send_to_char("    | {grealm will expect thee to know thy content.                   {x|\n\r",ch);
-      send_to_char("    |                                                               {x|\n\r",ch);
-      send_to_char("    | The Dark Figure fades from view and a voice booms '{gWelcome {x   |\n\r",ch);
-      sprintf(buf,"    | {g%14s, thine adventure awaits for thee.{x'             |\n\r",ch->name);
-      send_to_char(buf,ch);
-      send_to_char("    |                                                               |\n\r", ch);
-      send_to_char("    | You feel the universe begin to swirl as your senses are       |\n\r", ch);
-      send_to_char("    | bombarded by the swirling vortex surrounding you. As your     |\n\r", ch);
-      send_to_char("    | soul falls down to the realm of mortal men you think you can  |\n\r", ch);
-      send_to_char("    | make out what appears to be  a sign.............              |\n\r", ch);
-      send_to_char("\n\r", ch);
-      send_to_char("\n\r", ch);
+
       write_to_buffer( d, " ", 0);
       d->connected = CON_READ_GREETING;
       break;

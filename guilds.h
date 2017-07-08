@@ -39,6 +39,7 @@ typedef	void GuildCommand args((CHAR_DATA *ch, char *argument));
 struct guild_cmd_type
 {
 	char * const cmd;
+	char * const syntax;
 	GuildCommand * function;
 	int requiredRank;
 	bool leaderOnly;
@@ -77,3 +78,5 @@ void do_guild_accept(CHAR_DATA *ch, char *argument);
 void do_guild_prospects(CHAR_DATA* ch, char* argument);
 void do_guild_symbol(CHAR_DATA *ch, char *symbol);
 void do_guild_decline(CHAR_DATA *ch, char *name);
+void do_guild_deny(CHAR_DATA *ch, char *argument);
+void do_reload_guilds(CHAR_DATA* ch, char* argument);
