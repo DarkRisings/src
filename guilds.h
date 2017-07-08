@@ -80,4 +80,4 @@ void do_guild_symbol(CHAR_DATA *ch, char *symbol);
 void do_guild_decline(CHAR_DATA *ch, char *name);
 void do_guild_deny(CHAR_DATA *ch, char *argument);
 void do_reload_guilds(CHAR_DATA* ch, char* argument);
-void do_guild_leader(CHAR_DATA* ch, char* argument)
+void do_guild_leader(CHAR_DATA* ch, char* argument);
