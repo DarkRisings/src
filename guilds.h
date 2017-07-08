@@ -38,7 +38,7 @@ typedef bool(*GuildCommandHandler)(CHAR_DATA* ch, char* argument);
 //
 typedef struct cmd_table_type
 {
-	const char *cmd[15];
+	char cmd[MAX_INPUT_LENGTH];
 	GuildCommandHandler function;
 	int requiredRank;
 	bool leaderOnly;

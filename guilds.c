@@ -16,7 +16,7 @@ extern char *center_text args((char *txtstr, int txtnum));
 // Command, Function, Required Rank, Leader Only, Imm Only, Guild Only
 GCOMMAND cmdTbl[] =
 {
-	{{ "list", do_guild_list, 0, FALSE, FALSE, FALSE}},
+	{ "list", do_guild_list, 0, FALSE, FALSE, FALSE},
 	{ "establish", do_guild_establish, 0, FALSE, FALSE, FALSE },
 	{ "apply", do_guild_apply, 0, FALSE, FALSE, FALSE },
 	{ "approve", do_guild_approve, 0, FALSE, TRUE, FALSE },
@@ -86,7 +86,7 @@ void do_new_guild(CHAR_DATA* ch, char* argument)
 	success = (cmd->function)(ch, argument);
 }
 
-GCOMMAND *cmd_lookup(const char *arg)
+GCOMMAND *cmd_lookup(char *arg)
 {
 	GCOMMAND *cmd = cmdTbl;
 	int i;
