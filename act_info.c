@@ -3007,6 +3007,7 @@ char* whoLine( CHAR_DATA* ch, CHAR_DATA* looker )
     char chIncog[ MAX_INPUT_LENGTH ] = "";
     char chWizi[ MAX_INPUT_LENGTH ] = "";
     char chClan[ MAX_INPUT_LENGTH ] = "";
+	char cSymbol[MAX_INPUT_LENGTH] = "";
 
     chLineItem = ( char* )malloc( sizeof( char ) * MAX_INPUT_LENGTH );
 
@@ -3045,12 +3046,17 @@ char* whoLine( CHAR_DATA* ch, CHAR_DATA* looker )
         showBrawler = TRUE;
     }
 
+	if (ch->guild != GUILD_BOGUS) {
+		sprintf(cSymbol, "%s ", pc_guild_table[ch->guild].symbol);
+	}
+	
+
     snprintf(chLineItem, MAX_INPUT_LENGTH, "%s %s%s%s%s%s%s%s%s%s%s%s%s%s\n\r",
         chPretitle,
         chIncog,
         chWizi,
         IS_AFFECTED3(ch, AFF_VEIL) ? VEILED : "",
-        pc_guild_table[ch->guild].symbol,
+		cSymbol,
         IS_SET(ch->act_bits, PLR_QUEST) ? QUEST : "",
         IS_SET(ch->comm, COMM_AFK) ? AFK : "",
         IS_AFFECTED2(ch, AFF_WANTED) ? WANTED : "",

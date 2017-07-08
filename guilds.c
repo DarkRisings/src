@@ -272,9 +272,7 @@ void load_guild(FILE *fp)
 				log_string(pc_guild_table[id].name);
 			break;
 			case 'S':
-				// Don't wanna fuck with the who function too much
-				// I need a space after the clan symbol ala <symbol> Name
-				sprintf(buf, "%s ", fread_string_eol(fp));
+				sprintf(buf, "%s", fread_string_eol(fp));
 				strcpy(pc_guild_table[id].symbol, buf);
 			break;
 			case 'M':
@@ -460,7 +458,7 @@ void do_guild_establish(CHAR_DATA* ch, char* argument)
 	ch->guild = id;
 
 	// Format symbol
-	sprintf(buf, "%s ", symbol);
+	sprintf(buf, "%s", symbol);
 	strcpy(pc_guild_table[id].symbol, buf);
 
 	// Set name
