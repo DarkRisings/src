@@ -274,7 +274,7 @@ void load_guild(FILE *fp)
 			case 'S':
 				// Don't wanna fuck with the who function too much
 				// I need a space after the clan symbol ala <symbol> Name
-				sprintf(buf, "%s ", fread_word(fp));
+				sprintf(buf, "%s ", fread_string_eol(fp));
 				strcpy(pc_guild_table[id].symbol, buf);
 			break;
 			case 'M':
@@ -407,7 +407,7 @@ void do_guild_establish(CHAR_DATA* ch, char* argument)
 	FILE *player;
 	CHAR_DATA *gname;
 	argument = one_argument(argument, name);
-	argument = preserve_case_one_argument(argument, symbol);
+	strcpy(symbol, argument);
 
 	if (IS_NULLSTR(name) || IS_NULLSTR(symbol)) {
 		send_to_char("Syntax: guild establish <name> <symbol>\n\r", ch);
@@ -1079,7 +1079,7 @@ void do_guild_rank(CHAR_DATA *ch, char *argument)
 void do_guild_symbol(CHAR_DATA *ch, char *argument)
 {
 	char symbol[MAX_STRING_LENGTH];
-	argument = preserve_case_one_argument(argument, symbol);
+	strcpy(symbol, argument);
 
 	if (!is_guild(ch)) {
 		send_to_char("You're not even in a guild, let alone a leader.\n\r", ch);
