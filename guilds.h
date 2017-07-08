@@ -40,7 +40,6 @@ typedef struct cmd_table_type
 {
 	const char *cmd[15];
 	GuildCommandHandler function;
-	const char *syntax[MAX_INPUT_LENGTH];
 	int requiredRank;
 	bool leaderOnly;
 	bool immOnly;

@@ -13,7 +13,7 @@ struct pc_guild_type pc_guild_table[MAX_PC_GUILD];
 int guild_number = 0;
 extern char *center_text args((char *txtstr, int txtnum));
 
-// Command, Syntax, Function, Required Rank, Leader Only, Imm Only, Guild Only
+// Command, Function, Required Rank, Leader Only, Imm Only, Guild Only
 GCOMMAND cmdTbl[] =
 {
 	{ "list", do_guild_list, 0, FALSE, FALSE, FALSE},
@@ -41,8 +41,6 @@ void do_new_guild(CHAR_DATA* ch, char* argument)
 	bool success = FALSE;
 	MEMBER *m;
 	char arg1[MAX_INPUT_LENGTH] = "";
-	char arg2[MAX_INPUT_LENGTH] = "";
-	char arg3[MAX_INPUT_LENGTH] = "";
 	argument = one_argument(argument, arg1);
 	cmd = cmd_lookup(arg1);
 	m = get_member(ch->guild, ch->name);
