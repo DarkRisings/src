@@ -31,7 +31,7 @@ struct pc_guild_member
 	int rank;
 };
 
-typedef	void GuildCoammnd args((CHAR_DATA *ch, char *argument));
+typedef	void GuildCommand args((CHAR_DATA *ch, char *argument));
 
 //
 // table for holding all the guild commands
@@ -39,7 +39,7 @@ typedef	void GuildCoammnd args((CHAR_DATA *ch, char *argument));
 typedef struct guild_cmd_type
 {
 	char * const cmd;
-	GuildCoammnd * function;
+	GuildCommand * function;
 	int requiredRank;
 	bool leaderOnly;
 	bool immOnly;
@@ -62,18 +62,18 @@ void save_guilds();
 void nullify_applicant(int guild, char *name);
 void nullify_member(int guild, char *name);
 void get_guild_cmd_list(CHAR_DATA *ch);
-bool do_guild_expel(CHAR_DATA *ch, char *name);
-bool do_guild_defect(CHAR_DATA* ch, char* argument);
-bool do_guild_disband(CHAR_DATA* ch, char* argument);
-bool do_guild_rank(CHAR_DATA* ch, char* argument);
-bool do_guild_title(CHAR_DATA* ch, char* argument);
-bool do_guild_who(CHAR_DATA* ch, char* argument);
-bool do_guild_list(CHAR_DATA* ch, char* argument);
-bool do_guild_establish(CHAR_DATA* ch, char* argument);
-bool do_guild_apply(CHAR_DATA *ch, char *argument);
-bool do_guild_approve(CHAR_DATA *ch, char *argument);
-bool do_guild_info(CHAR_DATA* ch, char* argument);
-bool do_guild_accept(CHAR_DATA *ch, char *argument);
-bool do_guild_prospects(CHAR_DATA* ch, char* argument);
-bool do_guild_symbol(CHAR_DATA *ch, char *symbol);
-bool do_guild_decline(CHAR_DATA *ch, char *name);
+void do_guild_expel(CHAR_DATA *ch, char *name);
+void do_guild_defect(CHAR_DATA* ch, char* argument);
+void do_guild_disband(CHAR_DATA* ch, char* argument);
+void do_guild_rank(CHAR_DATA* ch, char* argument);
+void do_guild_title(CHAR_DATA* ch, char* argument);
+void do_guild_who(CHAR_DATA* ch, char* argument);
+void do_guild_list(CHAR_DATA* ch, char* argument);
+void do_guild_establish(CHAR_DATA* ch, char* argument);
+void do_guild_apply(CHAR_DATA *ch, char *argument);
+void do_guild_approve(CHAR_DATA *ch, char *argument);
+void do_guild_info(CHAR_DATA* ch, char* argument);
+void do_guild_accept(CHAR_DATA *ch, char *argument);
+void do_guild_prospects(CHAR_DATA* ch, char* argument);
+void do_guild_symbol(CHAR_DATA *ch, char *symbol);
+void do_guild_decline(CHAR_DATA *ch, char *name);
