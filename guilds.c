@@ -14,7 +14,7 @@ int guild_number = 0;
 extern char *center_text args((char *txtstr, int txtnum));
 
 // Command, Syntax, Function, Required Rank, Leader Only, Imm Only, Guild Only
-static const Command cmdTbl[] =
+GCOMMAND cmdTbl[] =
 {
 	{ "list", do_guild_list, 0, FALSE, FALSE, FALSE},
 	{ "establish", do_guild_establish, 0, FALSE, FALSE, FALSE },
@@ -31,12 +31,12 @@ static const Command cmdTbl[] =
 	{ "symbol", do_guild_symbol, 0, TRUE, FALSE, FALSE },
 	{ "decline", do_guild_decline, 2, FALSE, FALSE, FALSE },
 	{ "set", do_guild_list, 0, FALSE, FALSE, FALSE },
-	{ NULL, NULL, NULL, NULL, NULL, NULL },
+	{ NULL, NULL, 0, FALSE, FALSE, FALSE },
 };
 
 void do_new_guild(CHAR_DATA* ch, char* argument)
 {
-	Command cmd;
+	GCOMMAND *cmd;
 	char arg1[MAX_INPUT_LENGTH] = "";
 	char arg2[MAX_INPUT_LENGTH] = "";
 	char arg3[MAX_INPUT_LENGTH] = "";
@@ -52,22 +52,22 @@ void do_new_guild(CHAR_DATA* ch, char* argument)
 		get_guild_cmd_list(ch);
 		return;
 	}
-
-	cmd = cmd_lookup(arg1);
-
 }
 
-Command cmd_lookup(arg)
+GCOMMAND *cmd_lookup(arg)
 {
+	GCOMMAND *cmd = cmdTbl;
 	int i;
-	for (i = 0; cmdTbl[i].cmd != NULL; i++) {
+
+	for (i = 0; cmd[i].cmd != NULL; i++) {
 		if (!str_cmp(cmdTbl[i].cmd, arg)) {
-			break;
+			return &cmdTbl[i];
 		}
 	}
 
-	return cmdTbl[i];
+	return NULL;
 }
+
 
 void get_guild_cmd_list(CHAR_DATA *ch)
 {

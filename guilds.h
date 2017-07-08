@@ -44,8 +44,7 @@ typedef struct cmd_table_type
 	bool leaderOnly;
 	bool immOnly;
 	bool guildOnly;
-} Command;
-
+} GCOMMAND;
 
 //
 // Local functions
