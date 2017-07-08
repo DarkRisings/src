@@ -664,9 +664,10 @@ void do_guild_leader(CHAR_DATA* ch, char* argument)
 	{
 		if (d->connected == CON_PLAYING)
 		{
-			sprintf(buf, "{G%s{g has taken over leadership of {G%s{g.{x\n\r",
-				leader->name),
-				capitalize(pc_guild_table[guild].name);
+			sprintf(buf, "{G%s {g has taken over leadership of {G%s{g.{x\n\r",
+				leader->name,
+				capitalize(pc_guild_table[guild].name)
+			);
 			send_to_char(buf, d->character);
 		}
 	}
