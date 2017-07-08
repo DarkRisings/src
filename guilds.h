@@ -36,7 +36,7 @@ typedef	void GuildCommand args((CHAR_DATA *ch, char *argument));
 //
 // table for holding all the guild commands
 //
-typedef struct guild_cmd_type
+struct guild_cmd_type
 {
 	char * const cmd;
 	GuildCommand * function;
