@@ -22,7 +22,6 @@ const struct guild_cmd_type cmdTbl[] =
 	{ "establish", "guild establish <NAME> <SYMBOL> | IE: guild establish arcaenum {{C[Arcaenum]{{x", do_guild_establish, 0, FALSE, FALSE, FALSE },
 	{ "apply", "guild apply <GUILD NAME>", do_guild_apply, 0, FALSE, FALSE, FALSE },
 	{ "approve", "guild approve <GUILD NAME>", do_guild_approve, 0, FALSE, TRUE, FALSE },
-	{ "info", "guild info <GUILD NAME>", do_guild_info, 0, FALSE, FALSE, FALSE },
 	{ "who", "guild who <GUILD NAME>", do_guild_who, 0, FALSE, FALSE, FALSE },
 	{ "accept", "guild accept <APPLICANT NAME>", do_guild_accept, 2, FALSE, FALSE, TRUE },
 	{ "defect", "guild defect", do_guild_defect, 1, FALSE, FALSE, TRUE },
@@ -635,6 +634,8 @@ void do_guild_leader(CHAR_DATA* ch, char* argument)
 		return;
 	}
 
+	leader->guild = guild;
+
 	m = pc_guild_table[guild].members;
 	while (m != NULL) {
 		if (m->isLeader) {
@@ -650,7 +651,6 @@ void do_guild_leader(CHAR_DATA* ch, char* argument)
 		m = get_member(guild, leader->name);
 		m->isLeader = TRUE;
 	} else {
-		leader->guild = guild;
 		m = new_member_elt();
 		m->isLeader = TRUE;
 		m->levels = ch->level;
@@ -792,36 +792,7 @@ void do_guild_deny(CHAR_DATA *ch, char *argument)
 	return;
 }
 
-void do_guild_info(CHAR_DATA *ch, char *argument)
-{
-	char buf[MAX_INPUT_LENGTH] = "";
-	int center_diff;
 
-	center_diff = strlen(pc_guild_table[ch->guild].symbol) - strlen(strip_color(pc_guild_table[ch->guild].symbol));
-
-	if (!ch->guild || ch->guild == GUILD_BOGUS) {
-		send_to_char("You're not in a guild.\n\r", ch);
-		return;
-	}
-
-	send_to_char("{D:{B================================================={D:{x\n\r", ch);
-	send_to_char(center_text(pc_guild_table[ch->guild].symbol, (51 + center_diff)), ch);
-	send_to_char("{x\n\r", ch);
-	send_to_char("{D:{B================================================={D:{x\n\r", ch);
-	send_to_char("\n\r", ch);
-	send_to_char(center_text("LEADER", 50), ch);
-	send_to_char("\n\r", ch);
-	send_to_char(center_text(pc_guild_table[ch->guild].leader->name, 50), ch);
-	send_to_char("\n\r", ch);
-	send_to_char("\n\r", ch);
-	send_to_char(center_text("LEVELS", 50), ch);
-	send_to_char("\n\r", ch);
-	sprintf(buf, "%d", pc_guild_table[ch->guild].levels);
-	send_to_char(center_text(buf, 50), ch);
-	send_to_char("\n\r", ch);
-	send_to_char("\n\r", ch);
-	send_to_char("{D:{B-------------------------------------------------{D:{x\n\r", ch);
-}
 
 void do_guild_apply(CHAR_DATA *ch, char *argument)
 {

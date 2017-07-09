@@ -73,7 +73,6 @@ void do_guild_list(CHAR_DATA* ch, char* argument);
 void do_guild_establish(CHAR_DATA* ch, char* argument);
 void do_guild_apply(CHAR_DATA *ch, char *argument);
 void do_guild_approve(CHAR_DATA *ch, char *argument);
-void do_guild_info(CHAR_DATA* ch, char* argument);
 void do_guild_accept(CHAR_DATA *ch, char *argument);
 void do_guild_prospects(CHAR_DATA* ch, char* argument);
 void do_guild_symbol(CHAR_DATA *ch, char *symbol);
