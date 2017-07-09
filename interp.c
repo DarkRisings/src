@@ -95,7 +95,7 @@ const	struct	cmd_type	cmd_table	[] =
     { "get",		do_get,		POS_RESTING,	 0,  LOG_NORMAL, 1 },
     { "goto",           do_goto,        POS_DEAD,       L8,  LOG_NORMAL, 1 },
     { "group",          do_group,       POS_SLEEPING,    0,  LOG_NORMAL, 1 },
-    { "guild",		do_new_guild,	POS_DEAD,	0,  LOG_ALWAYS, 1 },
+    { "guild",		do_new_guild,	POS_DEAD,	0,  LOG_NORMAL, 1 },
     { "hit",		do_kill,	POS_FIGHTING,	 0,  LOG_NORMAL, 0 },
     { "inventory",	do_inventory,	POS_SLEEPING,	 0,  LOG_NORMAL, 1 },
     { "kill",		do_kill,	POS_FIGHTING,	 0,  LOG_NORMAL, 1 },

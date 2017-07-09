@@ -608,7 +608,7 @@ void do_guild_leader(CHAR_DATA* ch, char* argument)
 		return;
 	}
 
-	if (IS_NULLSTR(gname)) {
+	if (IS_NULLSTR(name)) {
 		send_to_char("You must supply a player name, who is playing.\n\r", ch);
 		return;
 	}
@@ -664,7 +664,7 @@ void do_guild_leader(CHAR_DATA* ch, char* argument)
 	{
 		if (d->connected == CON_PLAYING)
 		{
-			sprintf(buf, "{G%s {g has taken over leadership of {G%s{g.{x\n\r",
+			sprintf(buf, "{G%s{g has taken over leadership of {G%s{g.{x\n\r",
 				leader->name,
 				capitalize(pc_guild_table[guild].name)
 			);
@@ -727,7 +727,8 @@ void do_guild_approve(CHAR_DATA *ch, char *argument)
 		{
 			sprintf(buf, "{gGuild {G%s {ghas been established, led by {G%s{g.{x\n\r", 
 				capitalize(pc_guild_table[guild].name), 
-				pc_guild_table[guild].leader->name);
+				pc_guild_table[guild].leader->name
+			);
 			send_to_char(buf, d->character);
 		}
 	}
@@ -987,6 +988,7 @@ void do_guild_title(CHAR_DATA *ch, char *argument)
 
 	sprintf(buf, "They have achieved %s status within the guild.\n\r", title);
 	send_to_char(buf, ch);
+
 	sprintf(buf, "You have achieved %s status within the guild.\n\r", title);
 	send_to_char(buf, victim);
 
@@ -1063,7 +1065,7 @@ void do_guild_symbol(CHAR_DATA *ch, char *argument)
 	}
 
 	if (pc_guild_table[ch->guild].active) {
-		send_to_char("Your guild has alread been established.\n\r", ch);
+		send_to_char("Your guild has already been established.\n\r", ch);
 		return;
 	}
 

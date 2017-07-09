@@ -784,7 +784,7 @@ void do_guildtalk( CHAR_DATA *ch, char *argument )
 	REMOVE_BIT(ch->comm,COMM_NOGUILD);
 	m = get_member(ch->guild, ch->name);
 
-	sprintf( buf, "%s%s %s: {%c'%s'{x\n\r", 
+	sprintf( buf, "%s %s %s: {%c'%s'{x\n\r", 
 		pc_guild_table[ch->guild].symbol,
 		m->gtitle,
 		ch->name,
@@ -793,7 +793,6 @@ void do_guildtalk( CHAR_DATA *ch, char *argument )
 	);
 
 	send_to_char( buf, ch );
-	
 	for ( d = descriptor_list; d != NULL; d = d->next ) {
 		if ( d->connected == CON_PLAYING 
 			&& d->character != ch 
@@ -801,7 +800,7 @@ void do_guildtalk( CHAR_DATA *ch, char *argument )
 			&& !IS_SET(d->character->comm,COMM_NOGUILD) 
 			&& !IS_SET(d->character->comm,COMM_QUIET) )  {
 
-			sprintf( buf, "%s%s %s: {%c'%s'{x\n\r",
+			sprintf( buf, "%s %s %s: {%c'%s'{x\n\r",
 				pc_guild_table[ ch->guild ].symbol, m->gtitle,
 				(IS_NPC( ch ) ? capitalize(PERS2( ch, d->character)) :  ch->name ),
 				d->character->colors[ C_GDT ],

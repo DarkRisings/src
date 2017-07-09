@@ -40,6 +40,7 @@
 #include "recycle.h"
 #include "tables.h"
 #include "clans.h"
+#include "guilds.h"
 
 /* globals from db.c for load_notes */
 #if !defined(macintosh)
@@ -63,9 +64,10 @@ NOTE_DATA *history_list;
 NOTE_DATA *news_list;
 NOTE_DATA *changes_list;
 NOTE_DATA *trouble_list;
+extern struct pc_guild_type pc_guild_table[MAX_PC_GUILD];
 
 const char LASOMBRA_PAT[]   = "Sirath";
-const char RAVNOS_PAT[]     = "Kiyanne";
+const char RAVNOS_PAT[]     = "Revelin";
 const char TRAMUIR_PAT[]    = "Flocrian";
 const char FEROCAI_PAT[]   = "Alumot";
 
@@ -482,7 +484,7 @@ bool is_note_to( CHAR_DATA *ch, NOTE_DATA *pnote )
   if ( IS_IMMORTAL(ch) && is_name( "imm", pnote->to_list ) )
     return TRUE;
   
-  if (ch->guild && is_name(guild_table[ch->guild].name,pnote->to_list))
+  if (ch->guild && is_name(pc_guild_table[ch->guild].name,pnote->to_list))
     return TRUE;
   
   if ( is_name( ch->name, pnote->to_list ) )
@@ -553,7 +555,7 @@ bool is_note_class( CHAR_DATA *ch, NOTE_DATA *pnote)
 
 bool is_note_guild( CHAR_DATA *ch, NOTE_DATA *pnote)
 {
-    if (ch->guild && is_name(guild_table[ch->guild].name,pnote->to_list))
+    if (ch->guild && is_name(pc_guild_table[ch->guild].name,pnote->to_list))
     return TRUE;
 
     return FALSE;
@@ -2068,7 +2070,7 @@ void parse_note( CHAR_DATA *ch, char *argument, int type )
 
       if ( !IS_NPC( ch )
       &&   is_guild( ch )
-      &&   is_name( guild_table[ch->guild].name, ch->pnote->to_list ) )
+      &&   is_name( pc_guild_table[ch->guild].name, ch->pnote->to_list ) )
           ch->pcdata->guildnotes++;
 
       append_note(ch->pnote);

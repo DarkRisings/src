@@ -641,7 +641,7 @@ void fwrite_pet( CHAR_DATA *pet, FILE *fp)
     if (pet->race != pet->pIndexData->race)
     	fprintf(fp,"Race %s~\n", race_table[pet->race].name);
     if (pet->guild)
-        fprintf( fp, "Guild %s~\n",guild_table[pet->guild].name);
+        fprintf( fp, "Guild %s~\n",pc_guild_table[pet->guild].name);
     fprintf(fp,"Sex  %d\n", pet->sex);
     if (pet->level != pet->pIndexData->level)
     	fprintf(fp,"Levl %d\n", pet->level);

@@ -28,13 +28,14 @@
 #include "merc.h"
 #include "tables.h"
 #include "olc.h"
+#include "guilds.h"
 
 #define DIF(a,b) (~((~a)|(b)))
 
 
 /* Useful for converting new area file formats */
 #define OLC_AREA_VERSION 1
-
+extern struct pc_guild_type pc_guild_table[MAX_PC_GUILD];
 /*
  *  Verbose writes reset data in plain english into the comments
  *  section of the resets.  It makes areas considerably larger but
@@ -618,7 +619,7 @@ void save_rooms( FILE *fp, AREA_DATA *pArea )
 		 fprintf ( fp, "M %d H %d\n",pRoomIndex->mana_rate,
 		                             pRoomIndex->heal_rate);
 		if (pRoomIndex->guild > 0)
-		 fprintf ( fp, "G %s~\n" , guild_table[pRoomIndex->guild].name );
+		 fprintf ( fp, "G %s~\n" , pc_guild_table[pRoomIndex->guild].name );
 
 		if (!IS_NULLSTR(pRoomIndex->owner))
 		 fprintf ( fp, "O %s~\n" , pRoomIndex->owner );

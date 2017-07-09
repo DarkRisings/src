@@ -28,6 +28,7 @@
 #include "olc.h"
 #include "recycle.h"
 #include "lookup.h"
+#include "guilds.h"
 
 char * mprog_type_to_name ( int type );
 /* Return TRUE if area changed, FALSE if not. */
@@ -36,7 +37,7 @@ char * mprog_type_to_name ( int type );
 #define MEDIT( fun )		bool fun( CHAR_DATA *ch, char *argument )
 #define AEDIT( fun )		bool fun( CHAR_DATA *ch, char *argument )
 #define HEDIT( fun )            bool fun( CHAR_DATA *ch, char *argument )
-
+extern struct pc_guild_type pc_guild_table[MAX_PC_GUILD];
 
 struct olc_help_type
 {
@@ -1889,7 +1890,7 @@ REDIT( redit_show )
     {
 	sprintf( buf, "Guild      : [%d] %s\n\r",
 		pRoom->guild,
-		guild_table[pRoom->guild].name );
+		pc_guild_table[pRoom->guild].name );
 	strcat( buf1, buf );
     }
 
