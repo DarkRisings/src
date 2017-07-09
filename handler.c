@@ -83,23 +83,7 @@ char   *flag_string     args ( ( const struct flag_type *flag_table,
 char *strip_color( const char *str )
 {
     static char strfix[MAX_STRING_LENGTH * 2];
-    int oldstr = 0, newstr = 0;
-
-    while ( str[oldstr] != '\0' && oldstr < MAX_STRING_LENGTH*2 )
-    {
-        if ( str[oldstr] == '{' )
-        {
-            if ( str[oldstr+1] != '\0' )
-	        oldstr++;
-        }
-        else
-        {
-            strfix[newstr] = str[oldstr];
-            newstr++;
-        }
-        oldstr++;
-    }
-    strfix[newstr] = '\0';
+	strcpy(strfix, str);
     return strfix;
 }
 

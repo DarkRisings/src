@@ -5148,11 +5148,10 @@ void mod_who ( void )
       else
 	sprintf(pretitle, strip_color(wch->pcdata->pretitle));
 
-      strcpy( chguild, strip_color(guild_table[wch->guild].who_name) );
+
       strcpy( chtitle, strip_color(wch->pcdata->title ));
-      fprintf( fp, "[%13s] %s%s%s%s%s%s%s%s\n",
+      fprintf( fp, "[%13s] %s%s%s%s%s%s%s\n",
 	       pretitle,
-	       chguild,
 	       IS_SET(wch->act_bits,PLR_QUEST) ? "(QUEST) " : "",
 	       IS_SET(wch->comm, COMM_AFK) ? "[AFK] " : "",
 	       IS_AFFECTED2(wch,AFF_WANTED) ? "(WANTED) " : "",
